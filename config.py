@@ -5,4 +5,4 @@ from dataclasses import dataclass
 class Config:
 
     version = "v.0.0.1"
-    token = ""
+    token = "<yout token>"
