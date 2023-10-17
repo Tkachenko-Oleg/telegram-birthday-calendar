@@ -48,12 +48,3 @@ async def show_birthdays_today_command_handler(message: Message):
         await message.answer(f"Today birthdays:\n{answer_string}")
     else:
         await message.answer("Today birthdays is not found")
-
-
-# @dp.message(filters.Command('show_birthdays_this_week'))
-# async def show_birthdays_this_week_command_handler(message: Message):
-#     answer_string = str(datetime.date(datetime.now())).replace('-', '.')
-#
-#     print(answer_string == f"{DATA[6]['birthday']['year']}.{DATA[6]['birthday']['month']}.{DATA[6]['birthday']['day']}")
-#
-#     await message.answer(f"Date: {answer_string}")
