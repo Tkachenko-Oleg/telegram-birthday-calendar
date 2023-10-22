@@ -5,6 +5,16 @@ from config import Config
 bot = Bot(token=Config.token)
 dp = Dispatcher()
 
+# commands:
+# start
+# help
+# change language
+# add birthday
+# delete birthday
+# change birthday
+# show all birthdays
+# show birthdays this week
+
 
 async def main():
     try:

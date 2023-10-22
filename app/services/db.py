@@ -14,5 +14,6 @@ class Data:
         6: {'name': 'Samson', 'birthday': {'year': '2000', 'month': '09', 'day': '17'}},
         7: {'name': 'Bob', 'birthday': {'year': '2023', 'month': '10', 'day': '17'}},
         8: {'name': 'Nana', 'birthday': {'year': '2023', 'month': '10', 'day': '17'}},
-        9: {'name': 'Alexander', 'birthday': {'year': '2007', 'month': '08', 'day': '09'}}
+        9: {'name': 'Alexander', 'birthday': {'year': '2007', 'month': '08', 'day': '09'}},
+        10: {'name': 'Alex', 'birthday': {'year': '2023', 'month': '10', 'day': '22'}}
     }
