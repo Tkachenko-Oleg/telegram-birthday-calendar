@@ -3,6 +3,8 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
+from .bot_command_logic import BotCommandLogic
+
 from app.main import dp
 from app.services import Data
 DATA = Data.data
@@ -45,14 +47,5 @@ async def process_name_add(message: Message, state: FSMContext):
 @dp.message(FormAddNewBirthday.day)
 async def process_name_add(message: Message, state: FSMContext):
     await state.update_data(day=message.text)
-    new_data = await state.get_data()
-    new_key = len(DATA)
-    new_value = {'name': new_data.get('name'),
-                 'birthday': {'year': new_data.get('year'),
-                              'month': new_data.get('month'),
-                              'day': new_data.get('day')}}
-    DATA.update({new_key: new_value})
+    await message.answer(BotCommandLogic.add_new_birthday(DATA, await state.get_data()))
     await state.clear()
-    await message.answer(f"Your new data:\n{new_data.get('name')}: "
-                         f"{new_data.get('year')}.{new_data.get('month')}.{new_data.get('day')}")
-

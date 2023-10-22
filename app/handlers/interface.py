@@ -21,20 +21,12 @@ class InterfaceCommandLogic:
         pass
 
     @classmethod
-    def add_new_birthday(cls,
-                         db: dict,
-                         name: str,
-                         year: int,
-                         month: int,
-                         day: int) -> None:
+    def add_new_birthday(cls, db: dict, data: dict,) -> None:
         """
         Add a new birthday to the database
 
         :param db: database with birthdays
-        :param name: username added to the database
-        :param year: year of birthday
-        :param month: month of birthday
-        :param day: day of birthday
+        :param data: dictionary with username, year, month, day to add to the database
         :return: None
         """
         pass

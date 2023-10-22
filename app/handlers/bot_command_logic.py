@@ -39,5 +39,15 @@ class BotCommandLogic(InterfaceCommandLogic):
             return "Today birthdays is not found"
 
     @classmethod
-    def add_new_birthday(cls, db: dict, name: str, year: int, month: int, day: int) -> None:
-        pass
+    def add_new_birthday(cls, db: dict, data: dict) -> str:
+        key = len(db)
+        value = {'name': data.get('name'),
+                 'birthday': {'year': data.get('year'),
+                              'month': data.get('month'),
+                              'day': data.get('day')}}
+
+        db.update({key: value})
+
+        return f"Your new data:\n" \
+               f"{data.get('name')}: " \
+               f"{data.get('year')}.{data.get('month')}.{data.get('day')}"
