@@ -1,14 +1,15 @@
-from aiogram import Bot
+from aiogram import Bot, Dispatcher
 import asyncio
 from config import Config
-from handlers import dp
 
 bot = Bot(token=Config.token)
+dp = Dispatcher()
 
 
 async def main():
     try:
         print("Бот был успешно запущен")
+        from handlers import dp
         await dp.start_polling(bot)
     finally:
         print("Бот был остановлен")
