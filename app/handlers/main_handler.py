@@ -2,19 +2,11 @@ from datetime import datetime
 from aiogram.types import Message
 from aiogram.filters import Command
 
+from .bot_command_logic import BotCommandLogic
+
 from app.main import dp
 from app.services import Data
 DATA = Data.data
-
-# commands:
-# start
-# help
-# change language
-# add birthday
-# delete birthday
-# change birthday
-# show all birthdays
-# show birthdays this week
 
 
 @dp.message(Command('start'))
@@ -24,13 +16,13 @@ async def start_command_handler(message: Message):
 
 @dp.message(Command('show_all_birthdays'))
 async def show_all_birthdays_command_handler(message: Message):
-    answer_string = str()
-    for i in DATA:
-        answer_string += (f"{DATA[i]['name']}: "
-                          f"{DATA[i]['birthday']['year']}."
-                          f"{DATA[i]['birthday']['month']}."
-                          f"{DATA[i]['birthday']['day']}\n")
-    await message.answer(answer_string)
+    # answer_string = str()
+    # for i in DATA:
+    #     answer_string += (f"{DATA[i]['name']}: "
+    #                       f"{DATA[i]['birthday']['year']}."
+    #                       f"{DATA[i]['birthday']['month']}."
+    #                       f"{DATA[i]['birthday']['day']}\n")
+    await message.answer(BotCommandLogic.get_all_birthdays(..., DATA))
 
 
 @dp.message(Command('show_birthdays_today'))
