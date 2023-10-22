@@ -1,9 +1,7 @@
 class InterfaceCommandLogic:
     """class bot command logic"""
-    def __init__(self):
-        pass
-
-    def get_all_birthdays(self, db: dict) -> str:
+    @classmethod
+    def get_all_birthdays(cls, db: dict) -> str:
         """
         Get all birthdays from database
 
@@ -12,7 +10,8 @@ class InterfaceCommandLogic:
         """
         pass
 
-    def get_today_birthdays(self, db: dict) -> str:
+    @classmethod
+    def get_today_birthdays(cls, db: dict) -> str:
         """
         Get all birthdays whose date is equal to today's date
 
@@ -21,7 +20,8 @@ class InterfaceCommandLogic:
         """
         pass
 
-    def add_new_birthday(self,
+    @classmethod
+    def add_new_birthday(cls,
                          db: dict,
                          name: str,
                          year: int,
