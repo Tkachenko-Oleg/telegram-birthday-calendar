@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from .interface import InterfaceCommandLogic
 
@@ -51,3 +51,24 @@ class BotCommandLogic(InterfaceCommandLogic):
         return f"Your new data:\n" \
                f"{data.get('name')}: " \
                f"{data.get('year')}.{data.get('month')}.{data.get('day')}"
+
+    @classmethod
+    def check_correct_data(cls, year: str = '0001',
+                           month: str = '01',
+                           day: str = '01') -> bool:
+        try:
+            if len(year) < 4:
+                year += '0' * (4 - len(year))
+            if len(month) < 2:
+                month += '0'
+            if len(day) < 2:
+                day += '0'
+
+            if int(year) <= datetime.now().year:
+                date.fromisoformat(f"{year}-{month}-{day}")
+                return True
+            else:
+                raise ValueError
+
+        except ValueError:
+            return False
