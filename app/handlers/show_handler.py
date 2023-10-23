@@ -42,7 +42,8 @@ async def process_birthday_year_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.month)
 async def process_birthday_month_add(message: Message, state: FSMContext):
-    if BotCommandLogic.check_correct_data(month=message.text):
+    tmp_date = await state.get_data()
+    if BotCommandLogic.check_correct_data(year=tmp_date['year'], month=message.text):
         await state.update_data(month=message.text)
         await state.set_state(FormAddNewBirthday.day)
         await message.answer("Input day birthday: ")
@@ -52,7 +53,8 @@ async def process_birthday_month_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.day)
 async def process_birthday_day_add(message: Message, state: FSMContext):
-    if BotCommandLogic.check_correct_data(day=message.text):
+    tmp_date = await state.get_data()
+    if BotCommandLogic.check_correct_data(year=tmp_date['year'], month=tmp_date['month'], day=message.text):
         await state.update_data(day=message.text)
         await message.answer(BotCommandLogic.add_new_birthday(DATA, await state.get_data()))
         await state.clear()

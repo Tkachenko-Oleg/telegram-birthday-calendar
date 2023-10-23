@@ -58,11 +58,11 @@ class BotCommandLogic(InterfaceCommandLogic):
                            day: str = '01') -> bool:
         try:
             if len(year) < 4:
-                year += '0' * (4 - len(year))
+                year = ('0' * (4 - len(year))) + year
             if len(month) < 2:
-                month += '0'
+                month = '0' + month
             if len(day) < 2:
-                day += '0'
+                day = '0' + day
 
             if int(year) <= datetime.now().year:
                 date.fromisoformat(f"{year}-{month}-{day}")
