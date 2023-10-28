@@ -16,7 +16,10 @@ class BotCommandLogic(InterfaceCommandLogic):
                               f"{row['month']}."
                               f"{row['day']}")
 
-        return "\n".join(output)
+        if output:
+            return "\n".join(output)
+        else:
+            return "Your birthdays list is empty"
 
     @classmethod
     def get_today_birthdays(cls, db: dict, user_id: str) -> str:
