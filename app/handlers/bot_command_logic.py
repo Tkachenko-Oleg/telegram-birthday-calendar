@@ -5,20 +5,21 @@ from .interface import InterfaceCommandLogic
 
 class BotCommandLogic(InterfaceCommandLogic):
     @classmethod
-    def get_all_birthdays(cls, db: dict) -> str:
+    def get_all_birthdays(cls, db: dict, user_id: str) -> str:
         output = list()
 
         for element in db:
-            row = db[element]['birthday']
-            output.append(f"{db[element]['name']}: "
-                          f"{row['year']}."
-                          f"{row['month']}."
-                          f"{row['day']}")
+            if db[element]['user_id'] == user_id:
+                row = db[element]['birthday']
+                output.append(f"{db[element]['name']}: "
+                              f"{row['year']}."
+                              f"{row['month']}."
+                              f"{row['day']}")
 
         return "\n".join(output)
 
     @classmethod
-    def get_today_birthdays(cls, db: dict) -> str:
+    def get_today_birthdays(cls, db: dict, user_id: str) -> str:
         output = list()
         time_now = str(datetime.date(datetime.now())).replace('-', '.')
 
@@ -26,7 +27,7 @@ class BotCommandLogic(InterfaceCommandLogic):
             row = db[element]['birthday']
             string = f"{row['year']}.{row['month']}.{row['day']}"
 
-            if string == time_now:
+            if db[element]['user_id'] == user_id and string == time_now:
                 output.append(f"{db[element]['name']}: "
                               f"{row['year']}."
                               f"{row['month']}."
@@ -39,9 +40,10 @@ class BotCommandLogic(InterfaceCommandLogic):
             return "Today birthdays is not found"
 
     @classmethod
-    def add_new_birthday(cls, db: dict, data: dict) -> str:
+    def add_new_birthday(cls, db: dict, data: dict, user_id: str) -> str:
         key = len(db)
-        value = {'name': data.get('name'),
+        value = {'user_id': user_id,
+                 'name': data.get('name'),
                  'birthday': {'year': data.get('year'),
                               'month': data.get('month'),
                               'day': data.get('day')}}

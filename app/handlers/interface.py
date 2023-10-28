@@ -1,30 +1,33 @@
 class InterfaceCommandLogic:
     """class bot command logic"""
     @classmethod
-    def get_all_birthdays(cls, db: dict) -> str:
+    def get_all_birthdays(cls, db: dict, user_id: str) -> str:
         """
         Get all birthdays from database
 
+        :param user_id: user id from telegram
         :param db: database with all birthdays
         :return: string with all birthdays
         """
         pass
 
     @classmethod
-    def get_today_birthdays(cls, db: dict) -> str:
+    def get_today_birthdays(cls, db: dict, user_id: str) -> str:
         """
         Get all birthdays whose date is equal to today's date
 
+        :param user_id: user id from telegram
         :param db: database with all birthdays
         :return: string with all birthdays whose date is equal to today's date
         """
         pass
 
     @classmethod
-    def add_new_birthday(cls, db: dict, data: dict,) -> None:
+    def add_new_birthday(cls, db: dict, data: dict, user_id: str) -> None:
         """
         Add a new birthday to the database
 
+        :param user_id: user id from telegram
         :param db: database with birthdays
         :param data: dictionary with username, year, month, day to add to the database
         :return: None

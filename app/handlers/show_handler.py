@@ -56,7 +56,7 @@ async def process_birthday_day_add(message: Message, state: FSMContext):
     tmp_date = await state.get_data()
     if BotCommandLogic.check_correct_data(year=tmp_date['year'], month=tmp_date['month'], day=message.text):
         await state.update_data(day=message.text)
-        await message.answer(BotCommandLogic.add_new_birthday(DATA, await state.get_data()))
+        await message.answer(BotCommandLogic.add_new_birthday(DATA, await state.get_data(), str(message.from_user.id)))
         await state.clear()
     else:
         await message.answer("The day is incorrect!")
