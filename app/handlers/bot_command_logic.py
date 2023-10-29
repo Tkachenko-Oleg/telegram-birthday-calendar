@@ -16,8 +16,9 @@ class BotCommandLogic(InterfaceCommandLogic):
                               f"{row['month']}."
                               f"{row['day']}")
 
-        if output:
-            return "\n".join(output)
+        output_string = "\n".join(output)
+        if output_string:
+            return f"Your birthdays list: \n{output_string}"
         else:
             return "Your birthdays list is empty"
 
