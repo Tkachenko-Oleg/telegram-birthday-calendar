@@ -9,9 +9,7 @@ RUN pip3 install aiogram
 
 RUN mkdir -p /opt/telegram-birthday-calendar
 
-COPY *.py /opt/telegram-birthday-calendar
-COPY handlers /opt/telegram-birthday-calendar
-COPY services /opt/telegram-birthday-calendar
+COPY . /opt/telegram-birthday-calendar/app
 
 WORKDIR /opt/telegram-birthday-calendar/app
 RUN useradd mybot

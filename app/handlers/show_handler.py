@@ -5,8 +5,8 @@ from aiogram.fsm.context import FSMContext
 
 from .bot_command_logic import BotCommandLogic
 
-from app.main import dp
-from app.services import Data
+from main import dp
+from services import Data
 DATA = Data.data
 
 
