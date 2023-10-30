@@ -1,4 +1,5 @@
 # start:
+# docker build . -t bot_container:v1
 # docker run -it -e TOKEN=your_token bot_container:v1
 
 FROM ubuntu:22.04
