@@ -1,20 +1,13 @@
-from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from .bot_command_logic import BotCommandLogic
 
+from states import *
 from main import dp
 from services import Data
 DATA = Data.data
-
-
-class FormAddNewBirthday(StatesGroup):
-    name = State()
-    year = State()
-    month = State()
-    day = State()
 
 
 @dp.message(Command('add_birthday'))
