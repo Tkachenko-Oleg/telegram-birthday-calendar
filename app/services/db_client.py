@@ -14,6 +14,30 @@ class Data:
         6: {'user_id': '', 'name': 'Samson', 'birthday': {'year': '2000', 'month': '09', 'day': '17'}},
         7: {'user_id': '', 'name': 'Bob', 'birthday': {'year': '2023', 'month': '10', 'day': '17'}},
         8: {'user_id': '', 'name': 'Nana', 'birthday': {'year': '2023', 'month': '10', 'day': '17'}},
-        9: {'user_id': '', 'name': 'Alexander', 'birthday': {'year': '2007', 'month': '08', 'day': '09'}},
-        # 10: {'user_id': '2064313437', 'name': 'Alex', 'birthday': {'year': '2023', 'month': '10', 'day': '22'}}
+        9: {'user_id': '2064313437', 'name': 'Alexander', 'birthday': {'year': '2007', 'month': '08', 'day': '09'}},
+        10: {'user_id': '2064313437', 'name': 'Alexander', 'birthday': {'year': '2023', 'month': '10', 'day': '31'}}
     }
+
+
+# --------------------------------------------------------------
+# import psycopg2
+#
+# from .interface import InterfaceClientLogic
+#
+#
+# class DataBase(InterfaceClientLogic):
+#     connect = psycopg2.connect(
+#         database=None,
+#         user=None,
+#         password=None,
+#         host=None,
+#         port=None
+#     )
+#
+#     cursor = connect.cursor()
+#
+#     @classmethod
+#     async def find_name_by_date(cls, date: str):
+#         with cls.connect:
+#             cls.cursor.execute(f"SELECT name FROM birthdays WHERE date = {date}")
+#             return cls.cursor.fetchone()
