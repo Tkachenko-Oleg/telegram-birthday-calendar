@@ -5,5 +5,5 @@ from os import environ
 @dataclass
 class Config:
 
-    version = "v.0.0.2"
+    version = "v.0.0.3"
     token = environ['TOKEN']    # You need to add an environment variable
