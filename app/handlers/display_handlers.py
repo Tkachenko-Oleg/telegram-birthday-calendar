@@ -1,10 +1,10 @@
 from aiogram.types import Message
 from aiogram.filters import Command
 
-from .bot_command_logic import BotCommandLogic
+# from app.services.bot_command_logic import BotCommandLogic
 
 from main import dp
-from services import Data
+from services import Data, BotCommandLogic
 DATA = Data.data
 
 
