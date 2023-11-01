@@ -22,16 +22,14 @@ class Data:
 # --------------------------------------------------------------
 # import psycopg2
 #
-# from .interface import InterfaceClientLogic
 #
-#
-# class DataBase(InterfaceClientLogic):
+# class DataBase:
 #     connect = psycopg2.connect(
-#         database=None,
-#         user=None,
-#         password=None,
-#         host=None,
-#         port=None
+#         database="default_db",
+#         user="gen_user",
+#         password=".Far-KOSvLS9Nb",
+#         host="89.223.64.171",
+#         port=5432
 #     )
 #
 #     cursor = connect.cursor()
