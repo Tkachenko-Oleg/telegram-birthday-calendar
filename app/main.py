@@ -2,18 +2,17 @@ from aiogram import Bot, Dispatcher
 import asyncio
 from config import Config
 
+from services import MemeryDataSource
+
+def create_data_source(key):
+    if key == "list":
+        return MemeryDataSource()
+
+
 bot = Bot(token=Config.token)
 dp = Dispatcher()
 
-# commands:
-# start
-# help
-# change language
-# add birthday
-# delete birthday
-# change birthday
-# show all birthdays
-# show birthdays this week
+datasource = create_data_source('list')
 
 
 async def main():
