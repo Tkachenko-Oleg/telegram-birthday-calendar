@@ -21,8 +21,8 @@ async def process_birthday_name_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.year)
 async def process_birthday_year_add(message: Message, state: FSMContext):
-    if tools.check_correct_data(year=message.text):
-        await state.update_data(year=message.text)
+    await state.update_data(year=message.text)
+    if tools.check_correct_data(await state.get_data()):
         await state.set_state(FormAddNewBirthday.month)
         await message.answer("Input month birthday: ")
     else:
@@ -31,9 +31,8 @@ async def process_birthday_year_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.month)
 async def process_birthday_month_add(message: Message, state: FSMContext):
-    if tools.check_correct_data(year=dict(await state.get_data()).get('year'),
-                                          month=message.text):
-        await state.update_data(month=message.text)
+    await state.update_data(month=message.text)
+    if tools.check_correct_data(await state.get_data()):
         await state.set_state(FormAddNewBirthday.day)
         await message.answer("Input day birthday: ")
     else:
@@ -42,11 +41,9 @@ async def process_birthday_month_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.day)
 async def process_birthday_day_add(message: Message, state: FSMContext):
-    if tools.check_correct_data(year=dict(await state.get_data()).get('year'),
-                                          month=dict(await state.get_data()).get('month'),
-                                          day=message.text):
-        await state.update_data(day=message.text)
-        await message.answer(datasource.add_new_birthday(await state.get_data(), str(message.from_user.id)))
+    await state.update_data(day=message.text)
+    if tools.check_correct_data(await state.get_data()):
+        await message.answer(datasource.add_new_birthday(await state.get_data(), message.from_user.id))
         await state.clear()
     else:
         await message.answer("The day is incorrect!")

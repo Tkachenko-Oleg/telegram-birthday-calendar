@@ -1,6 +1,6 @@
-import datetime
+from datetime import date
 
 class UserModel:
-    user_id: str = None
+    user_id: int = None
     name: str = None
-    birthday: datetime = None
+    birthday: date = None
