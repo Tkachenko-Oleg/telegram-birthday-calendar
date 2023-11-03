@@ -2,17 +2,20 @@ from aiogram import Bot, Dispatcher
 import asyncio
 from config import Config
 
-from services import MemeryDataSource
+from services import IsMemeryDataSource, Tools, DatasourceId
 
 def create_data_source(key):
-    if key == "list":
-        return MemeryDataSource()
+    match key:
+        case DatasourceId.InMemory:
+            return IsMemeryDataSource()
+        case DatasourceId.Postgres:
+            return None
 
 
 bot = Bot(token=Config.token)
 dp = Dispatcher()
-
-datasource = create_data_source('list')
+datasource = create_data_source(DatasourceId.InMemory)
+tools = Tools()
 
 
 async def main():

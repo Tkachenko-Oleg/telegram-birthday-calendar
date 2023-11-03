@@ -1,8 +1,6 @@
 from aiogram.types import Message
 from aiogram.filters import Command
 
-# from app.services.bot_command_logic import BotCommandLogic
-
 from main import dp, datasource
 
 @dp.message(Command('show_all_birthdays'))

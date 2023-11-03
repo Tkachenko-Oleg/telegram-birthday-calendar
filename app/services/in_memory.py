@@ -1,10 +1,10 @@
 from datetime import datetime, date
 
-from .interface import DataSource
+from .datasource import DataSource
 from .user_model import UserModel
 
 
-class MemeryDataSource(DataSource):
+class IsMemeryDataSource(DataSource):
     __db:dict = dict()
     def get_all_birthdays(self, user_id: str):
         output = list()
@@ -57,7 +57,7 @@ class MemeryDataSource(DataSource):
             month = '0' + month
         if len(data.get('day')) < 2:
             day = '0' + day
-            
+
         value = {'user_id': user_id,
                  'name': data.get('name'),
                  'birthday': {'year': year,
@@ -71,21 +71,3 @@ class MemeryDataSource(DataSource):
         return f"Your new data:\n" \
                f"{data.get('name')}: " \
                f"{data.get('year')}.{data.get('month')}.{data.get('day')}"
-
-    def check_correct_data(self, year: str = '0001', month: str = '01', day: str = '01'):
-        try:
-            if len(year) < 4:
-                year = ('0' * (4 - len(year))) + year
-            if len(month) < 2:
-                month = '0' + month
-            if len(day) < 2:
-                day = '0' + day
-
-            if int(year) <= datetime.now().year:
-                date.fromisoformat(f"{year}-{month}-{day}")
-                return True
-            else:
-                raise ValueError
-
-        except ValueError:
-            return False

@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from states import *
-from main import dp, datasource
+from main import dp, datasource, tools
 
 
 @dp.message(Command('add_birthday'))
@@ -21,7 +21,7 @@ async def process_birthday_name_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.year)
 async def process_birthday_year_add(message: Message, state: FSMContext):
-    if datasource.check_correct_data(year=message.text):
+    if tools.check_correct_data(year=message.text):
         await state.update_data(year=message.text)
         await state.set_state(FormAddNewBirthday.month)
         await message.answer("Input month birthday: ")
@@ -31,7 +31,7 @@ async def process_birthday_year_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.month)
 async def process_birthday_month_add(message: Message, state: FSMContext):
-    if datasource.check_correct_data(year=dict(await state.get_data()).get('year'),
+    if tools.check_correct_data(year=dict(await state.get_data()).get('year'),
                                           month=message.text):
         await state.update_data(month=message.text)
         await state.set_state(FormAddNewBirthday.day)
@@ -42,7 +42,7 @@ async def process_birthday_month_add(message: Message, state: FSMContext):
 
 @dp.message(FormAddNewBirthday.day)
 async def process_birthday_day_add(message: Message, state: FSMContext):
-    if datasource.check_correct_data(year=dict(await state.get_data()).get('year'),
+    if tools.check_correct_data(year=dict(await state.get_data()).get('year'),
                                           month=dict(await state.get_data()).get('month'),
                                           day=message.text):
         await state.update_data(day=message.text)
