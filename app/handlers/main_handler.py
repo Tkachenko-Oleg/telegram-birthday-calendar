@@ -18,4 +18,3 @@ async def start_command_handler(message: Message):
 #     # print(message.contact)
 #     # print(message.from_user.id)
 #
-#     await message.answer_contact(phone_number='+79661743744', first_name='NN', user_id='2064313437')
