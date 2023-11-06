@@ -11,3 +11,4 @@ class Config:
     username = environ['USER']      # Your database username
     password = environ['PASSWORD']  # Your database password
     host = environ['HOST']          # Your database host
+    port = environ['PORT']          # Your database port

@@ -3,9 +3,9 @@ from datetime import datetime
 class Tools:
     @staticmethod
     def check_correct_data(input_date: dict):
-        year = input_date.get('year')
-        month = input_date.get('month')
-        day = input_date.get('day')
+        year = input_date.get('year_of_birth')
+        month = input_date.get('month_of_birth')
+        day = input_date.get('day_of_birth')
 
         try:
             if int(year) < 1800:

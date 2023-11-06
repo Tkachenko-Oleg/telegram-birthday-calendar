@@ -1,1 +1,2 @@
-from .birthday_add import *
+from .birthday_add import FormAddNewBirthday
+from .registration import FormRegistration

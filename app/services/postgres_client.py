@@ -12,7 +12,7 @@ class IsDataBaseSource(DataSource):
         user=Config.username,
         password=Config.password,
         host=Config.host,
-        port=5432)
+        port=Config.port)
     cursor = connect.cursor()
 
 
