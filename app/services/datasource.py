@@ -1,9 +1,30 @@
 class DataSource:
-    def get_all_birthdays(self, user_id: int):
+    def add_user_to_main_database(self, data):
         pass
 
-    def get_today_birthdays(self, user_id: int):
+    def check_exist_user(self, tg_id):
         pass
 
-    def add_new_birthday(self, data: dict, user_id: int):
+    def show_user_profile(self, tg_id):
+        pass
+
+    def delete_profile(self, tg_id):
+        pass
+
+    def change_user_profile(self, tg_id, type_data, changed_data):
+        pass
+
+    def search_user_by_nickname(self, nickname):
+        pass
+
+    def search_user_by_phone_number(self, phone_number):
+        pass
+
+    def check_the_relationship_database(self, tg_id, unique_id):
+        pass
+
+    def add_user_birthday_to_relation_database(self, tg_id, unique_id):
+        pass
+
+    def show_list_of_birthdays(self, tg_id):
         pass

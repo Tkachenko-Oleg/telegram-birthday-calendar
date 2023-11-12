@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 class Tools:
     @staticmethod
@@ -8,7 +8,7 @@ class Tools:
         day = input_date.get('day_of_birth')
 
         try:
-            if int(year) < 1800:
+            if int(year) < 1800 or date.today().year < int(year) + 1:
                 return False
             if not month:
                 month = '01'

@@ -1,6 +1,9 @@
 from datetime import date
 
 class UserModel:
-    user_id: int = None
-    name: str = None
+    tg_id: int = None
+    username: str = None
+    nickname:str = None
+    phone_number: str = None
+    language:str = None
     birthday: date = None

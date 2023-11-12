@@ -79,3 +79,25 @@ class IsDataBaseSource(DataSource):
             self.connect.commit()
 
         return f"Your new date:\n{user.name}: {user.birthday}"
+
+# create type Language as enum (
+#     'Ru',
+#     'En'
+# );
+#
+# create table if not exists tg_users (
+#     tg_user_id bigserial not null primary key,
+#     tg_id varchar(100),
+#     phone_number varchar(20) not null  unique,
+#     user_name varchar(100),
+#     nick_name varchar(100),
+#     language Language,
+#     birth_date date not null
+# );
+#
+# create table if not exists user_relations
+# (
+#     user_id bigint not null references tg_users (tg_user_id),
+#     friend_id bigint not null references tg_users (tg_user_id),
+#     unique (user_id, friend_id)
+# );
