@@ -5,6 +5,9 @@ class DataSource:
     def check_exist_user(self, tg_id):
         pass
 
+    def check_exist_nickname(self, nickname):
+        pass
+
     def show_user_profile(self, tg_id):
         pass
 

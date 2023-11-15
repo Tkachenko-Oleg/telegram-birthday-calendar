@@ -8,7 +8,7 @@ from main import dp, datasource
 
 @dp.message(Command('search_user'))
 async def search_user(message: Message):
-    is_exist_user_profile = datasource.check_exist_user(message.from_user.id)
+    is_exist_user_profile = datasource.check_exist_user(str(message.from_user.id))
     if is_exist_user_profile:
         button_nickname = InlineKeyboardButton(text="by nickname", callback_data="search_user_by_nickname")
         button_phone_number = InlineKeyboardButton(text="by phone number", callback_data="search_user_by_phone_number")
@@ -25,13 +25,14 @@ async def start_search_user_by_nickname(callback: CallbackQuery, state: FSMConte
 
 @dp.message(FormSearchUser.nickname)
 async def search_user_by_nickname(message: Message, state: FSMContext):
-    nickname = message.text
+    await state.update_data(nickname=message.text)
+    nickname = dict(await state.get_data()).get('nickname')
     user_info, unique_id = datasource.search_user_by_nickname(nickname)
     await state.set_state(FormSearchUser.user_id_to_add)
     if user_info:
         await state.update_data(user_id_to_add=unique_id)
         user_id_to_add = dict(await state.get_data()).get('user_id_to_add')
-        if datasource.check_the_relationship_database(message.from_user.id, user_id_to_add):
+        if datasource.check_the_relationship_database(unique_id, user_id_to_add):
             button_add = InlineKeyboardButton(text="add user to birthday list", callback_data="add_user_to_list")
             button_not_add = InlineKeyboardButton(text="do not add user to birthday list", callback_data="do_not_add_user")
             keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_add, button_not_add]])
@@ -49,13 +50,14 @@ async def start_search_user_by_nickname(callback: CallbackQuery, state: FSMConte
 
 @dp.message(FormSearchUser.phone_number)
 async def search_user_by_nickname(message: Message, state: FSMContext):
-    phone_number = message.text
+    await state.update_data(nickname=message.text)
+    phone_number = dict(await state.get_data()).get('phone_number')
     user_info, unique_id = datasource.search_user_by_phone_number(phone_number)
     await state.set_state(FormSearchUser.user_id_to_add)
     if user_info:
         await state.update_data(user_id_to_add=unique_id)
         user_id_to_add = dict(await state.get_data()).get('user_id_to_add')
-        if datasource.check_the_relationship_database(message.from_user.id, user_id_to_add):
+        if datasource.check_the_relationship_database(unique_id, user_id_to_add):
             button_add = InlineKeyboardButton(text="add user to birthday list", callback_data="add_user_to_list")
             button_not_add = InlineKeyboardButton(text="do not add user to birthday list", callback_data="do_not_add_user")
             keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_add, button_not_add]])
@@ -70,7 +72,7 @@ async def add_user_to_birthday_list(callback: CallbackQuery, state: FSMContext):
     user_id_to_add = dict(await state.get_data()).get('user_id_to_add')
     await state.clear()
     await callback.message.delete()
-    if datasource.add_user_birthday_to_relation_database(callback.from_user.id, user_id_to_add):
+    if datasource.add_user_birthday_to_relation_database(str(callback.from_user.id), user_id_to_add):
         await callback.message.answer("The user has been added to your birthday list")
     else:
         await callback.message.answer("The user has not been added to your birthday list")

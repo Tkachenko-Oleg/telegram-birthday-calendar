@@ -8,7 +8,7 @@ from main import dp, tools, datasource
 
 @dp.message(Command('change_my_profile'))
 async def change_user_profile_command_handler(message: Message):
-    is_exist_user_profile = datasource.check_exist_user(message.from_user.id)
+    is_exist_user_profile = datasource.check_exist_user(str(message.from_user.id))
     if is_exist_user_profile:
         button_language = InlineKeyboardButton(text="language", callback_data="change_user_language")
         button_username = InlineKeyboardButton(text="username", callback_data="change_user_username")
@@ -19,17 +19,26 @@ async def change_user_profile_command_handler(message: Message):
         await message.answer("You are not registered")
 
 @dp.callback_query(F.data == "change_user_language")
-async def change_user_language(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(FormChangeUserProfile.language)
-    await callback.message.answer("Input new language")
+async def change_user_language(callback: CallbackQuery):
+    await callback.message.delete()
+    button_ru = InlineKeyboardButton(text="Ru", callback_data="button_ru")
+    button_en = InlineKeyboardButton(text="En", callback_data="button_en")
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_ru, button_en]])
+    await callback.message.answer("Choose a language", reply_markup=keyboard)
+
+@dp.callback_query(F.data == 'button_ru')
+async def change_language_on_ru(callback: CallbackQuery):
+    user_id = str(callback.from_user.id)
+    datasource.change_user_profile(user_id, 'language', "Ru")
+    await callback.message.answer(f"Your new profile:\n\n{datasource.show_user_profile(user_id)}")
     await callback.message.delete()
 
-@dp.message(FormChangeUserProfile.language)
-async def input_new_language(message: Message):
-    user_id = message.from_user.id
-    new_language = message.text
-    datasource.change_user_profile(user_id, 'language', new_language)
-    await message.answer(f"Your new profile:\n\n{datasource.show_user_profile(user_id)}")
+@dp.callback_query(F.data == 'button_en')
+async def change_language_on_ru(callback: CallbackQuery):
+    user_id = str(callback.from_user.id)
+    datasource.change_user_profile(user_id, 'language', "En")
+    await callback.message.answer(f"Your new profile:\n\n{datasource.show_user_profile(user_id)}")
+    await callback.message.delete()
 
 @dp.callback_query(F.data == "change_user_username")
 async def change_user_username(callback: CallbackQuery, state: FSMContext):
@@ -38,11 +47,13 @@ async def change_user_username(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
 
 @dp.message(FormChangeUserProfile.username)
-async def input_new_username(message: Message):
-    user_id = message.from_user.id
-    new_username = message.text
-    datasource.change_user_profile(user_id, 'username', new_username)
+async def input_new_username(message: Message, state: FSMContext):
+    user_id = str(message.from_user.id)
+    await state.update_data(username=message.text)
+    new_username = dict(await state.get_data()).get('username')
+    datasource.change_user_profile(user_id, 'user_name', new_username)
     await message.answer(f"Your new profile:\n\n{datasource.show_user_profile(user_id)}")
+    await state.clear()
 
 @dp.callback_query(F.data == "change_user_birth_date")
 async def change_user_birth_date(callback: CallbackQuery, state: FSMContext):
@@ -79,7 +90,7 @@ async def input_new_day(message: Message, state: FSMContext):
     if message.text and message.text.isdigit():
         await state.update_data(day_of_birth=message.text)
         if tools.check_correct_data(await state.get_data()):
-            user_id = message.from_user.id
+            user_id = str(message.from_user.id)
             datasource.change_user_profile(user_id, 'birth_date', await state.get_data())
             await state.clear()
             await message.answer(f"Your new profile:\n\n{datasource.show_user_profile(user_id)}")
