@@ -11,7 +11,7 @@ class DataSource:
     def show_user_profile(self, tg_id):
         pass
 
-    def delete_profile(self, tg_id):
+    def delete_profile(self, user_id):
         pass
 
     def change_user_profile(self, tg_id, type_data, changed_data):
@@ -20,14 +20,32 @@ class DataSource:
     def search_user_by_nickname(self, nickname):
         pass
 
-    def search_user_by_phone_number(self, phone_number):
+    def search_user_by_contact_id(self, tg_id):
+        pass
+
+    def search_user_info(self, tg_id, nickname):
+        pass
+
+    def search_user_id_info(self, tg_id, nickname):
+        pass
+
+    def search_contact(self, tg_id, nickname):
+        pass
+
+    def search_contact_info(self, tg_id=None, nickname=None):
         pass
 
     def check_the_relationship_database(self, tg_id, unique_id):
         pass
 
-    def add_user_birthday_to_relation_database(self, tg_id, unique_id):
+    def add_user_birthday_to_relation_database(self, user_id, contact_id):
         pass
 
-    def show_list_of_birthdays(self, tg_id):
+    def show_list_of_birthdays(self, user_id):
+        pass
+
+    def get_id_user(self, tg_id):
+        pass
+
+    def get_info_about_birthday(self, user_id):
         pass

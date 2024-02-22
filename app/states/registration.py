@@ -6,6 +6,5 @@ class FormRegistration(StatesGroup):
     nickname = State()
     phone_number = State()
     language = State()
-    year_of_birth = State()
     month_of_birth = State()
     day_of_birth = State()

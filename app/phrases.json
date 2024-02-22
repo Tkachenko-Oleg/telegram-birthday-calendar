@@ -1,0 +1,180 @@
+{
+  "months": {
+    "december": {
+      "Ru": "Декабрь",
+      "En": "December"
+    },
+    "january": {
+      "Ru": "Январь",
+      "En": "January"
+    },
+    "february": {
+      "Ru": "Февраль",
+      "En": "February"
+    },
+    "march": {
+      "Ru": "Март",
+      "En": "March"
+    },
+    "april": {
+      "Ru": "Апрель",
+      "En": "April"
+    },
+    "may": {
+      "Ru": "Май",
+      "En": "May"
+    },
+    "june": {
+      "Ru": "Июнь",
+      "En": "June"
+    },
+    "july": {
+      "Ru": "Июль",
+      "En": "July"
+    },
+    "august": {
+      "Ru": "Август",
+      "En": "August"
+    },
+    "september": {
+      "Ru": "Сентябрь",
+      "En": "September"
+    },
+    "october": {
+      "Ru": "Октябрь",
+      "En": "October"
+    },
+    "november": {
+      "Ru": "Ноябрь",
+      "En": "November"
+    }
+  },
+  "fields": {
+    "nick": {
+      "Ru": "Псевдоним",
+      "En": "Nickname"
+    },
+    "name": {
+      "Ru": "Имя",
+      "En": "Name"
+    },
+    "language": {
+      "Ru": "Язык",
+      "En": "Language"
+    },
+    "birthday": {
+      "Ru": "День рождения",
+      "En": "Birthday"
+    },
+    "phone": {
+      "Ru": "Телефонный номер",
+      "En": "Phone number"
+    }
+  },
+  "phrases": {
+    "registration": {
+      "Ru": "Регистрация",
+      "En": "Registration"
+    },
+    "selectLanguage": {
+      "Ru": "Выберите язык",
+      "En": "Select language"
+    },
+    "enterNickname": {
+      "Ru": "введите уникальный псевдоним",
+      "En": "Enter unique nickname"
+    },
+    "enterName": {
+      "Ru": "Введите свое имя",
+      "En": "Enter your name"
+    },
+    "selectMonth": {
+      "Ru": "Выберите месяц своего рождения",
+      "En": "Select your birth month"
+    },
+    "selectDay": {
+      "Ru": "Выберите день своего рождения",
+      "En": "Select your birthday"
+    },
+    "registrationDone": {
+      "Ru": "Регистрация успешно завершена",
+      "En": "Registration successfully completed"
+    },
+    "changeLanguage": {
+      "Ru": "Изменить язык",
+      "En": "Change language"
+    },
+    "changeName": {
+      "Ru": "Изменить имя",
+      "En": "Change name"
+    },
+    "changeBirthday": {
+      "Ru": "Изменить дату рождения",
+      "En": "Change date of birth"
+    },
+    "questDelProfile": {
+      "Ru": "Удалить профиль",
+      "En": "Delete profile"
+    },
+    "questNotDelProfile": {
+      "Ru": "Не удалять профиль",
+      "En": "Do not delete profile"
+    },
+    "searchContact": {
+      "Ru": "Искать по контакту",
+      "En": "Search by contact"
+    },
+    "searchNick": {
+      "Ru": "Искать по псевдониму",
+      "En": "Search by nickname"
+    },
+    "searchMethod": {
+      "Ru": "Выберите метод поиска",
+      "En": "Select search method"
+    },
+    "userNotFound": {
+      "Ru": "Пользователь не найден",
+      "En": "User is not found"
+    },
+    "userAdded": {
+      "Ru": "Пользователь добавлен в список дней рождения",
+      "En": "User added to birthday list"
+    },
+    "userNotAdded": {
+      "Ru": "Пользователь не добавлен в список дней рождения",
+      "En": "User not added to birthday list"
+    },
+    "confirmation": {
+      "Ru": "Вы уверены?",
+      "En": "Are you sure?"
+    },
+    "regButton": {
+      "Ru": "Нажмите кнопку, чтобы поделиться своим номером телефона для регистрации",
+      "En": "Click the button to share your phone number for registration"
+    },
+    "changeSetting": {
+      "Ru": "Какие настройки вы хотите изменить?",
+      "En": "What settings do you want to change?"
+    },
+    "messageDelProfile": {
+      "Ru": "Профиль удален",
+      "En": "Profile deleted"
+    },
+    "messageNotDelProfile": {
+      "Ru": "Профиль не удален",
+      "En": "Profile not deleted"
+    },
+    "questAddUser": {
+      "Ru": "Добавить день рождения в список?",
+      "En": "Add a birthday to the list?"
+    },
+    "addBirthday": {
+      "Ru": "Добавить день рождения",
+      "En": "Add birthday"
+    },
+    "notAddBirthday": {
+      "Ru": "Не добавлять день рождения",
+      "En": "Not add birthday"
+    }
+  }
+}

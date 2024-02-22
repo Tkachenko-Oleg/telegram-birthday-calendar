@@ -1,105 +1,91 @@
-from aiogram import F
-from aiogram.types import Message, CallbackQuery, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.filters import Command
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
+from aiogram.filters import Command
+from aiogram import F
 
 from states import FormRegistration
 from main import dp, tools, datasource
+from services import Panels
 
 
 @dp.message(Command('start'))
 async def start_registration_command_handler(message: Message, state: FSMContext):
-    user = message.from_user
-    if not datasource.check_exist_user(str(user.id)):
-        await message.answer(f"Hello, {user.full_name}!\nBot is running!")
-        await state.update_data(tg_id=user.id)
-        button_ru = InlineKeyboardButton(text="Ru", callback_data="reg_button_ru")
-        button_en = InlineKeyboardButton(text="En", callback_data="reg_button_en")
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_ru, button_en]])
-        await message.answer("Choose a language", reply_markup=keyboard)
+    if not datasource.check_exist_user(str(message.from_user.id)):
+        await state.update_data(tg_id=message.from_user.id)
+        await message.answer(f"{message.from_user.full_name} 👋", reply_markup=Panels.language_panel())
     else:
         await message.answer("You are already registered")
 
-@dp.callback_query(F.data == 'reg_button_ru')
-async def registration_input_language_ru(callback: CallbackQuery, state: FSMContext):
-    reg_button = [[KeyboardButton(text='registration', request_contact=True)]]
-    panel = ReplyKeyboardMarkup(keyboard=reg_button)
-    await state.update_data(language='Ru')
-    await state.set_state(FormRegistration.phone_number)
-    await callback.message.answer("Please, click the button to share your phone number", reply_markup=panel)
 
-@dp.callback_query(F.data == 'reg_button_en')
-async def registration_input_language_en(callback: CallbackQuery, state: FSMContext):
-    reg_button = [[KeyboardButton(text='registration', request_contact=True)]]
-    panel = ReplyKeyboardMarkup(keyboard=reg_button)
-    await state.update_data(language='En')
+@dp.message((F.text == "Русский 🇷🇺") | (F.text == "English 🇬🇧"))
+async def registration_input_language_ru(message: Message, state: FSMContext):
+    if message.text == "Русский 🇷🇺":
+        await state.update_data(language='Ru')
+    elif message.text == "English 🇬🇧":
+        await state.update_data(language='En')
+    else:
+        pass
+
+    await message.answer("Please, click the button to share your phone number", reply_markup=Panels.contact_panel())
     await state.set_state(FormRegistration.phone_number)
-    await callback.message.answer("Please, click the button to share your phone number", reply_markup=panel)
+
 
 @dp.message(FormRegistration.phone_number)
 async def registration_input_phone_number(message: Message, state: FSMContext):
     try:
         await state.update_data(phone_number=message.contact.phone_number)
+        await message.answer("Input unique nickname: ", reply_markup=ReplyKeyboardRemove())
         await state.set_state(FormRegistration.nickname)
-        await message.answer("Input unique nickname: ")
     except AttributeError:
         await message.answer("Please, click the button")
 
+
 @dp.message(FormRegistration.nickname)
 async def registration_input_nickname(message: Message, state: FSMContext):
-    nickname = message.text
-    if nickname:
-        if not datasource.check_exist_nickname(nickname):
-            await state.update_data(nickname=nickname)
-            await state.set_state(FormRegistration.username)
+    if message.text:
+        if not datasource.check_exist_nickname(message.text):
+            await state.update_data(nickname=message.text)
             await message.answer("Input name: ")
+            await state.set_state(FormRegistration.username)
         else:
             await message.answer("This nickname already exists")
     else:
         await message.answer("Please enter a text message with your nickname")
 
+
 @dp.message(FormRegistration.username)
 async def registration_input_name(message: Message, state: FSMContext):
     if message.text:
         await state.update_data(username=message.text)
-        await state.set_state(FormRegistration.year_of_birth)
-        await message.answer("Input year of birth: ")
+        await message.answer("Input month of birth: ", reply_markup=Panels.month_panel().as_markup(resize_keyboard=True))
+        await state.set_state(FormRegistration.month_of_birth)
     else:
         await message.answer("Please enter a text message with your name")
 
-@dp.message(FormRegistration.year_of_birth)
-async def registration_input_year_of_birth(message: Message, state: FSMContext):
-    if message.text and message.text.isdigit():
-        await state.update_data(year_of_birth=message.text)
-        if tools.check_correct_data(await state.get_data()):
-            await state.set_state(FormRegistration.month_of_birth)
-            await message.answer("Input month of birth: ")
-        else:
-            await message.answer("The year is incorrect!")
-    else:
-        await message.answer("Please enter a number-only text message with your birth year")
 
 @dp.message(FormRegistration.month_of_birth)
 async def registration_input_month_of_birth(message: Message, state: FSMContext):
-    if message.text and message.text.isdigit():
-        await state.update_data(month_of_birth=message.text)
-        if tools.check_correct_data(await state.get_data()):
-            await state.set_state(FormRegistration.day_of_birth)
-            await message.answer("Input day of birth: ")
-        else:
-            await message.answer("The month is incorrect!")
+    user_month = tools.convert_string_to_integer_month(message.text)
+    if user_month:
+        await state.update_data(month_of_birth=user_month)
+        await message.answer("Input day of birth: ", reply_markup=Panels.day_panel(user_month).as_markup(resize_keyboard=True))
+        await state.set_state(FormRegistration.day_of_birth)
     else:
-        await message.answer("Please enter a number-only text message with your birth month")
+        await message.answer("Please, click the button")
+
 
 @dp.message(FormRegistration.day_of_birth)
 async def registration_input_day_of_birth(message: Message, state: FSMContext):
-    if message.text and message.text.isdigit():
-        await state.update_data(day_of_birth=message.text)
-        if tools.check_correct_data(await state.get_data()):
+    if message.text != 'ᅠ' and message.text.isdigit():
+        user_day = tools.correct_day(message.text)
+
+        if user_day:
+            await state.update_data(day_of_birth=message.text)
             datasource.add_user_to_main_database(await state.get_data())
+            await message.answer("You have been registered", reply_markup=Panels.commands_panel())
             await state.clear()
-            await message.answer("You have been registered")
         else:
-            await message.answer("The day is incorrect!")
+            await message.answer("Please, click the button")
     else:
-        await message.answer("Please enter a number-only text message with your birthday")
+        await message.delete()
+        await message.answer("Please, click the button with number")

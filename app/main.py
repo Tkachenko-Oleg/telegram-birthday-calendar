@@ -15,6 +15,7 @@ def create_data_source(key):
 bot = Bot(token=Config.token)
 dp = Dispatcher()
 datasource = create_data_source(DatasourceId.Postgres)
+# datasource.create_table()
 tools = Tools()
 
 

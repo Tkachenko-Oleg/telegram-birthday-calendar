@@ -98,17 +98,17 @@ class IsMemoryDataSource(DataSource):
                 return False
         return True
 
-    def add_user_birthday_to_relation_database(self, tg_id, user_id_to_add):
+    def add_user_birthday_to_relation_database(self, user_id, contact_id):
         value_1 = None
         value_2 = None
 
         for element in self.__db_users:
-            if tg_id == self.__db_users.get(element).get('user_id'):
+            if user_id == self.__db_users.get(element).get('user_id'):
                 value_1 = self.__db_users.get(element).get('unique_id')
 
         if value_1:
             for element in self.__db_users:
-                if user_id_to_add == self.__db_users.get(element).get('unique_id'):
+                if contact_id == self.__db_users.get(element).get('unique_id'):
                     value_2 = self.__db_users.get(element).get('unique_id')
 
             if value_2:
@@ -121,12 +121,12 @@ class IsMemoryDataSource(DataSource):
         else:
             return False
 
-    def show_list_of_birthdays(self, tg_id):
+    def show_list_of_birthdays(self, user_id):
         required_ids = list()
         list_of_birthdays = list()
 
         for element in self.__db_relation:
-            if tg_id == self.__db_relation.get(element).get('main_user'):
+            if user_id == self.__db_relation.get(element).get('main_user'):
                 required_ids.append(self.__db_relation.get(element).get('dependent_user'))
 
         if required_ids:
