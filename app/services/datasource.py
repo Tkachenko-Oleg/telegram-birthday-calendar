@@ -1,4 +1,43 @@
 class DataSource:
+    def get_id(self, tg_id: str) -> int:
+        pass
+
+    def is_nickname_exist(self, nickname: str) -> bool:
+        pass
+
+    def add_new_user_id(self, tg_id: str) -> None:
+        pass
+
+    def add_new_user_info(self, usr_id: int, data: dict) -> None:
+        pass
+
+    def get_lang(self, usr_id: str) -> str:
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     def add_user_to_main_database(self, data):
         pass
 

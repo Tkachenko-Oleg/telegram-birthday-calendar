@@ -3,80 +3,204 @@ import psycopg2
 from datetime import date
 
 from .datasource import DataSource
-from .user_model import UserModel
 from .tools import Tools
 from config import Config
 
 class IsDataBaseSource(DataSource):
-    connect = psycopg2.connect(
-        database=Config.database,
-        user=Config.username,
-        password=Config.password,
-        host=Config.host,
-        port=Config.port)
-    cursor = connect.cursor()
+    def __init__(self):
+        self.connect = psycopg2.connect(
+            database=Config.database,
+            user=Config.username,
+            password=Config.password,
+            host=Config.host,
+            port=Config.port)
+        self.cursor = self.connect.cursor()
 
 
     def create_table(self):
-        self.cursor.execute(
-            """
-            create type UserLang as Enum (
-            'Ru',
-            'En'
+        with self.connect:
+            self.cursor.execute(
+                """
+                create type UserLang as Enum (
+                'Ru',
+                'En'
+                )
+                """
             )
-            """
-        )
 
-        self.cursor.execute(
-            """
-            create table if not exists tg_users (
-            user_id bigserial not null primary key,
-            tg_id varchar(100),
-            phone_number varchar(20) not null unique,
-            user_nick varchar(100) not null unique,
-            user_name varchar(100),  
-            birth_date date not null, 
-            language UserLang
+            self.cursor.execute(
+                """
+                create table if not exists user_ids (
+                user_id bigserial not null primary key,
+                tg_id varchar(50)
+                );
+                """
             )
-            """
-        )
 
-        self.cursor.execute(
-            """
-            create table if not exists user_relations (
-            user_id bigint not null references tg_users (user_id),
-            friend_id bigint not null references tg_users (user_id),
-            unique (user_id, friend_id)
+            self.cursor.execute(
+                """
+                create table if not exists tg_users (
+                user_id bigint not null references user_ids (user_id),
+                user_nickname varchar(50) not null unique,
+                user_name varchar(50),  
+                language UserLang,
+                birth_date date not null, 
+                phone_number varchar(20) not null unique
+                );
+                """
             )
-            """
-        )
 
-        self.connect.commit()
+            self.cursor.execute(
+                """
+                create table if not exists user_relations (
+                user_id bigint not null references user_ids (user_id),
+                friend_id bigint not null references user_ids (user_id),
+                unique (user_id, friend_id)
+                );
+                """
+            )
+
+            self.connect.commit()
 
 
-    def add_user_to_main_database(self, data):
-        year = 2000
-        month = int(data.get('month_of_birth'))
-        day = int(data.get('day_of_birth'))
+    def get_id(self, tg_id: str) -> int:
+        with self.connect:
+            self.cursor.execute(
+                """
+                select user_id
+                from user_ids
+                where tg_id = %s
+                """,
+                (tg_id,)
+            )
+        data = self.cursor.fetchone()
+        if data:
+            return data[0]
+        return 0
 
-        user = UserModel()
-        user.tg_id = data.get('tg_id')
-        user.username = data.get('username')
-        user.nickname = data.get('nickname')
-        user.phone_number = data.get('phone_number')
-        user.language = data.get('language')
-        user.birth_date = date(year, month, day)
 
+    def is_nickname_exist(self, nickname: str) -> bool:
+        with self.connect:
+            self.cursor.execute(
+                """
+                select exists (
+                select 1
+                from tg_users
+                where user_nickname = %s
+                );
+                """,
+                (nickname,)
+            )
+        data = self.cursor.fetchone()[0]
+        return data
+
+
+    def add_new_user_id(self, tg_id: str) -> None:
+        with self.connect:
+            self.cursor.execute(
+                """
+                insert into user_ids
+                (tg_id)
+                values (%s);
+                """,
+                (tg_id,)
+            )
+            self.connect.commit()
+
+
+    def add_new_user_info(self, usr_id: int, data: dict) -> None:
         with self.connect:
             self.cursor.execute(
                 """
                 insert into tg_users
-                (tg_id, phone_number, user_nick, user_name, birth_date, language) 
-                values (%s, %s, %s, %s, %s, %s)
+                (user_id, user_nickname, user_name, language, birth_date, phone_number)
+                values (%s, %s, %s, %s, %s, %s);
                 """,
-                (user.tg_id, user.phone_number, user.nickname, user.username, user.birth_date, user.language)
+                (usr_id, data.get('nick'), data.get('name'), data.get('lang'), data.get('birth'), data.get('phone'))
             )
             self.connect.commit()
+
+
+    def get_lang(self, usr_id: str) -> str:
+        with self.connect:
+            self.cursor.execute(
+                """
+                select language
+                from tg_users
+                where user_id = %s
+                """,
+                (usr_id,)
+            )
+
+            lang = self.cursor.fetchone()[0]
+            return lang
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def add_user_to_main_database(self, data):
+    #     year = 2000
+    #     month = int(data.get('month_of_birth'))
+    #     day = int(data.get('day_of_birth'))
+    #
+    #     user = UserModel()
+    #     user.tg_id = data.get('tg_id')
+    #     user.username = data.get('username')
+    #     user.nickname = data.get('nickname')
+    #     user.phone_number = data.get('phone_number')
+    #     user.language = data.get('language')
+    #     user.birth_date = date(year, month, day)
+    #
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             insert into tg_users
+    #             (tg_id, phone_number, user_nick, user_name, birth_date, language)
+    #             values (%s, %s, %s, %s, %s, %s)
+    #             """,
+    #             (user.tg_id, user.phone_number, user.nickname, user.username, user.birth_date, user.language)
+    #         )
+    #         self.connect.commit()
 
 
     def check_exist_user(self, tg_id):

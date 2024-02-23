@@ -1,52 +1,52 @@
 {
   "months": {
     "december": {
-      "Ru": "Декабрь",
-      "En": "December"
+      "Ru": "Декабрь ❄️",
+      "En": "December ❄️"
     },
     "january": {
-      "Ru": "Январь",
-      "En": "January"
+      "Ru": "Январь ❄️",
+      "En": "January ❄️"
     },
     "february": {
-      "Ru": "Февраль",
-      "En": "February"
+      "Ru": "Февраль ❄️",
+      "En": "February ❄️"
     },
     "march": {
-      "Ru": "Март",
-      "En": "March"
+      "Ru": "Март \uD83C\uDF31",
+      "En": "March \uD83C\uDF31"
     },
     "april": {
-      "Ru": "Апрель",
-      "En": "April"
+      "Ru": "Апрель \uD83C\uDF31",
+      "En": "April \uD83C\uDF31"
     },
     "may": {
-      "Ru": "Май",
-      "En": "May"
+      "Ru": "Май \uD83C\uDF31",
+      "En": "May \uD83C\uDF31"
     },
     "june": {
-      "Ru": "Июнь",
-      "En": "June"
+      "Ru": "Июнь ☀️",
+      "En": "June ☀️"
     },
     "july": {
-      "Ru": "Июль",
-      "En": "July"
+      "Ru": "Июль ☀️",
+      "En": "July ☀️"
     },
     "august": {
-      "Ru": "Август",
-      "En": "August"
+      "Ru": "Август ☀️",
+      "En": "August ☀️"
     },
     "september": {
-      "Ru": "Сентябрь",
-      "En": "September"
+      "Ru": "Сентябрь \uD83C\uDF41",
+      "En": "September \uD83C\uDF41"
     },
     "october": {
-      "Ru": "Октябрь",
-      "En": "October"
+      "Ru": "Октябрь \uD83C\uDF41",
+      "En": "October \uD83C\uDF41"
     },
     "november": {
-      "Ru": "Ноябрь",
-      "En": "November"
+      "Ru": "Ноябрь \uD83C\uDF41",
+      "En": "November \uD83C\uDF41"
     }
   },
   "fields": {
@@ -81,7 +81,7 @@
       "En": "Select language"
     },
     "enterNickname": {
-      "Ru": "введите уникальный псевдоним",
+      "Ru": "Введите уникальный псевдоним",
       "En": "Enter unique nickname"
     },
     "enterName": {
@@ -175,6 +175,22 @@
     "notAddBirthday": {
       "Ru": "Не добавлять день рождения",
       "En": "Not add birthday"
+    },
+    "nicknameExist": {
+      "Ru": "Такой псевдоним уже занят",
+      "En": "This nickname is already taken"
+    },
+    "textMessage": {
+      "Ru": "Введите текстовое сообщение",
+      "En": "Enter a text message"
+    },
+    "alreadyReg": {
+      "Ru": "Вы уже зарегистрированны",
+      "En": "You are already registered"
+    },
+    "longMessage": {
+      "Ru": "Максимальная длина сообщения - 50 символов",
+      "En": "The maximum message length is 50 characters."
     }
   }
 }

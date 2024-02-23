@@ -5,7 +5,7 @@ from os import environ
 @dataclass
 class Config:
 
-    version = "v.0.2.0"
+    version = "v.0.3.0"
     token = environ['TOKEN']                # You need to add an environment variable
     database = environ['DATABASE']          # Your database name
     username = environ['USERDATABASE']      # Your database username
