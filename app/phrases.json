@@ -212,5 +212,27 @@
       "Ru": "Ваш список дней рождений пуст",
       "En": "Your birthday list is empty"
     }
+  },
+  "helpText": {
+    "showProfile": {
+      "Ru": "- Используйте команду /my_profile, чтобы увидеть свой профиль",
+      "En": "- Use the /my_profile command to see your profile"
+    },
+    "changeProfile": {
+      "Ru": "- Используйте команду /change_profile, чтобы изменить данные о себе (язык, имя, дата рождения)",
+      "En": "- Use the /change_profile command to change your information (language, name, date of birth)"
+    },
+    "deleteProfile": {
+      "Ru": "- Используйте команду /delete_profile, чтобы удалить свой профиль",
+      "En": "- Use the /my_profile command to delete your profile"
+    },
+    "searchProfile": {
+      "Ru": "- Используйте команду /search_user, чтобы найти информацию о днях рождения других пользователей",
+      "En": "- Use the /search_user command to find information about other users birthdays"
+    },
+    "showBirthdayList": {
+      "Ru": "- Используйте команду /birthday_list, чтобы увидеть свой список дней рождения",
+      "En": "- Use the /birthday_list command to see your list of birthdays"
+    }
   }
 }
