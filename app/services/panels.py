@@ -96,18 +96,22 @@ class Panels:
         return panel
 
 
-    # @staticmethod
-    # def search_user_methods(request_id: int):
-    #     buttons = [[KeyboardButton(text='search with contact',
-    #                               request_user=KeyboardButtonRequestUser(request_id=request_id, user_is_bot=False)),
-    #                KeyboardButton(text='search with nickname')]]
-    #     panel = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
-    #     return panel
-    #
-    #
-    # @staticmethod
-    # def add_contact():
-    #     buttons = [[KeyboardButton(text="add birthday in my list ✅"),
-    #                 KeyboardButton(text="don't add birthday ❌")]]
-    #     panel = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
-    #     return panel
+    @staticmethod
+    def search_user_methods(request_id, phrases, lang):
+        method_buttons = [[
+            KeyboardButton(text=phrases['phrases']['searchContact'][lang],
+                request_user=KeyboardButtonRequestUser(request_id=request_id, user_is_bot=False)),
+            KeyboardButton(text=phrases['phrases']['searchNick'][lang])
+        ]]
+        panel = ReplyKeyboardMarkup(keyboard=method_buttons, resize_keyboard=True)
+        return panel
+
+
+    @staticmethod
+    def add_contact(phrases, lang):
+        add_buttons = [[
+            KeyboardButton(text=phrases['phrases']['addBirthday'][lang]),
+            KeyboardButton(text=phrases['phrases']['notAddBirthday'][lang])
+        ]]
+        panel = ReplyKeyboardMarkup(keyboard=add_buttons, resize_keyboard=True)
+        return panel

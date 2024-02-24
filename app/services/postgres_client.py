@@ -218,11 +218,47 @@ class IsDataBaseSource(DataSource):
             self.connect.commit()
 
 
+    def check_relationship(self, usr_id: int, contact_id: int):
+        with self.connect:
+            self.cursor.execute(
+                """
+                select exists (
+                select 1
+                from user_relations
+                where user_id = %s and friend_id = %s
+                );
+                """,
+                (usr_id, contact_id)
+            )
+        data = self.cursor.fetchone()[0]
+        return data
 
 
+    def add_relationship(self, usr_id: int, contact_id: int):
+        with self.connect:
+            self.cursor.execute(
+                """
+                insert into user_relations
+                (user_id, friend_id)
+                values (%s, %s);
+                """,
+                (usr_id, contact_id)
+            )
+            self.connect.commit()
 
 
-
+    def get_id_by_nickname(self, nickname: str):
+        with self.connect:
+            self.cursor.execute(
+                """
+                select user_id
+                from tg_users
+                where user_nickname = %s
+                """,
+                (nickname,)
+            )
+        data = self.cursor.fetchone()[0]
+        return data
 
 
 

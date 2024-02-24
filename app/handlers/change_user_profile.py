@@ -1,9 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.types import Message
-from aiogram import F
 
-from services import Panels
 from states import FormChangeUserProfile
 from main import dp, tools, datasource, phrases, panels
 

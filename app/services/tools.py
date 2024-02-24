@@ -134,9 +134,9 @@ class Tools:
         month_index = int(date_list[1]) - 1
         day = int(date_list[2])
         match lang:
-            case 'En':
+            case '🇬🇧':
                 month = months_en[month_index]
-            case 'Ru':
+            case '🇷🇺':
                 month = months_ru[month_index]
             case _:
                 month = 0
@@ -213,7 +213,13 @@ class Tools:
         nickname = data[0].replace('"', '')
         name = data[1].replace('"', '')
         phone_number = data[3]
-        language = data[4]
+        match data[4]:
+            case 'Ru':
+                language = "🇷🇺"
+            case 'En':
+                language = "🇬🇧"
+            case _:
+                language = "🇬🇧"
         birth_date = Tools.parse_postgres_date(data[2], language)
 
         data_dict = {

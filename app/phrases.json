@@ -137,11 +137,11 @@
       "En": "User is not found"
     },
     "userAdded": {
-      "Ru": "Пользователь добавлен в список дней рождения",
+      "Ru": "Пользователь добавлен в список дней рождений",
       "En": "User added to birthday list"
     },
     "userNotAdded": {
-      "Ru": "Пользователь не добавлен в список дней рождения",
+      "Ru": "Пользователь не добавлен в список дней рождений",
       "En": "User not added to birthday list"
     },
     "confirmation": {
@@ -169,12 +169,12 @@
       "En": "Add a birthday to the list?"
     },
     "addBirthday": {
-      "Ru": "Добавить день рождения",
-      "En": "Add birthday"
+      "Ru": "Добавить день рождения ✅",
+      "En": "Add birthday ✅"
     },
     "notAddBirthday": {
-      "Ru": "Не добавлять день рождения",
-      "En": "Not add birthday"
+      "Ru": "Не добавлять день рождения ❌",
+      "En": "Not add birthday ❌"
     },
     "nicknameExist": {
       "Ru": "Такой псевдоним уже занят",
@@ -195,6 +195,18 @@
     "updateProfile": {
       "Ru": "Профиль обновлен",
       "En": "Profile updated"
+    },
+    "noMethod": {
+      "Ru": "Метод не выбран",
+      "En": "Method not selected"
+    },
+    "alreadyFriend": {
+      "Ru": "Пользователь уже добавлен",
+      "En": "User already added"
+    },
+    "addSelf": {
+      "Ru": "Вы не можете добавить себя в список дней рождений",
+      "En": "You can't add yourself to the birthday list"
     }
   }
 }

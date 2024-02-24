@@ -29,6 +29,15 @@ class DataSource:
     def delete_profile(self, usr_id: int):
         pass
 
+    def check_relationship(self, usr_id: int, contact_id: int):
+        pass
+
+    def add_relationship(self, usr_id: int, contact_id: int):
+        pass
+
+    def get_id_by_nickname(self, nickname: str):
+        pass
+
 
 
 

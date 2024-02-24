@@ -4,63 +4,108 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram import F
 
-from services import Panels
+from main import dp, datasource, phrases, panels, tools
 from states import FormSearchUser
-from main import dp, datasource
 
 
 @dp.message(Command('search_user'))
 async def method_for_search_contact_handler(message: Message, state :FSMContext):
-    user_id = datasource.get_id_user(str(message.from_user.id))
-    await state.update_data(user_id=user_id)
-    await message.answer("Select a search method", reply_markup=Panels.search_user_methods(message.from_user.id))
-
-
-@dp.message((F.content_type == ContentType.USER_SHARED) | (F.text == 'search with nickname'))
-async def search_contact_handler(message: Message, state: FSMContext):
-    if message.content_type == ContentType.USER_SHARED:
-        contact_id = datasource.search_contact(tg_id=str(message.user_shared.user_id))
-        contact_data = datasource.search_contact_info(tg_id=str(message.user_shared.user_id))
-        if contact_id and contact_data:
-            await state.update_data(contact_id=contact_id)
-            await message.answer(f"{contact_data}", reply_markup=ReplyKeyboardRemove())
-            await message.answer(f"Do you want add birthday in your list?", reply_markup=Panels.add_contact())
-        else:
-            await message.answer("User not found", reply_markup=ReplyKeyboardRemove())
+    tg_id = str(message.from_user.id)
+    usr_id = datasource.get_id(tg_id)
+    if usr_id:
+        lang = datasource.get_lang(usr_id)
+        text = phrases['phrases']['searchMethod'][lang]
+        await message.answer(text=text, reply_markup=panels.search_user_methods(usr_id, phrases, lang))
+        await state.set_state(FormSearchUser.search_state)
     else:
-        await state.set_state(FormSearchUser.contact_id)
-        await message.answer("Enter nickname", reply_markup=ReplyKeyboardRemove())
+        await message.answer("You are not registered")
 
 
-@dp.message(FormSearchUser.contact_id)
-async def search_contact_nickname(message: Message, state: FSMContext):
-    contact_id = datasource.search_contact(nickname=message.text)
-    contact_data = datasource.search_contact_info(nickname=message.text)
-    user_id = dict(await state.get_data())['user_id']
-
-    if contact_id and contact_data:
-        await state.clear()
-        await state.update_data(user_id = user_id, contact_id=contact_id)
-        await message.answer(f"{contact_data}")
-        await message.answer(f"Do you want add birthday in your list?", reply_markup=Panels.add_contact())
-    else:
-        await message.answer("User not found")
-        await state.clear()
-
-
-@dp.message((F.text == "add birthday in my list ✅") | (F.text == "don't add birthday ❌"))
-async def add_contact(message: Message, state: FSMContext):
-    if message.text == "add birthday in my list ✅":
-        ids = dict(await state.get_data())
-        user_id = ids['user_id']
-        contact_id = ids['contact_id']
-        if user_id != contact_id:
-            if datasource.check_the_relationship_database(user_id, contact_id):
-                datasource.add_user_birthday_to_relation_database(user_id, contact_id)
-                await message.answer("User has been added", reply_markup=ReplyKeyboardRemove())
+@dp.message(FormSearchUser.search_state)
+async def choose_method(message: Message, state: FSMContext):
+    tg_id = str(message.from_user.id)
+    usr_id = datasource.get_id(tg_id)
+    lang = datasource.get_lang(usr_id)
+    content = message.content_type
+    match content:
+        case ContentType.USER_SHARED:
+            contact_id = datasource.get_id(str(message.user_shared.user_id))
+            if contact_id:
+                postgres_data = datasource.user_profile(contact_id)
+                contact_data = tools.parse_postgres(postgres_data)
+                contact_info = f"{phrases['fields']['nick'][lang]}: {contact_data.get('nick')}\n" \
+                       f"{phrases['fields']['name'][lang]}: {contact_data.get('name')}\n" \
+                       f"{phrases['fields']['birthday'][lang]}: {contact_data.get('birth')}\n" \
+                       f"{phrases['fields']['phone'][lang]}: {contact_data.get('phone')}\n" \
+                       f"{phrases['fields']['language'][lang]}: {contact_data.get('lang')}"
+                text = phrases['phrases']['questAddUser'][lang]
+                await state.update_data(contact_id=contact_id)
+                await message.answer(text=contact_info, reply_markup=panels.remove_panel())
+                await message.answer(text=text, reply_markup=panels.add_contact(phrases, lang))
+                await state.set_state(FormSearchUser.add_state)
             else:
-                await message.answer("User already was added", reply_markup=ReplyKeyboardRemove())
-        else:
-            await message.answer("You can not adding yourself to birthday list", reply_markup=ReplyKeyboardRemove())
+                text = phrases['phrases']['userNotFound'][lang]
+                await message.answer(text=text, reply_markup=panels.remove_panel())
+                await state.clear()
+        case ContentType.TEXT:
+            if message.text == phrases['phrases']['searchNick'][lang]:
+                text = phrases['phrases']['enterNickname'][lang]
+                await message.answer(text=text, reply_markup=panels.remove_panel())
+                await state.set_state(FormSearchUser.nickname_state)
+            else:
+                text = phrases['phrases']['noMethod'][lang]
+                await message.answer(text=text, reply_markup=panels.commands_panel())
+                await state.clear()
+        case _:
+            text = phrases['phrases']['noMethod'][lang]
+            await message.answer(text=text, reply_markup=panels.commands_panel())
+            await state.clear()
+
+
+@dp.message(FormSearchUser.nickname_state)
+async def search_nickname_contact(message: Message, state: FSMContext):
+    tg_id = str(message.from_user.id)
+    usr_id = datasource.get_id(tg_id)
+    lang = datasource.get_lang(usr_id)
+    nickname = message.text
+    if datasource.is_nickname_exist(nickname):
+        contact_id = datasource.get_id_by_nickname(nickname)
+        postgres_data = datasource.user_profile(contact_id)
+        contact_data = tools.parse_postgres(postgres_data)
+        contact_info = f"{phrases['fields']['nick'][lang]}: {contact_data.get('nick')}\n" \
+                       f"{phrases['fields']['name'][lang]}: {contact_data.get('name')}\n" \
+                       f"{phrases['fields']['birthday'][lang]}: {contact_data.get('birth')}\n" \
+                       f"{phrases['fields']['phone'][lang]}: {contact_data.get('phone')}\n" \
+                       f"{phrases['fields']['language'][lang]}: {contact_data.get('lang')}"
+        text = phrases['phrases']['questAddUser'][lang]
+        await state.update_data(contact_id=contact_id)
+        await message.answer(text=contact_info, reply_markup=panels.remove_panel())
+        await message.answer(text=text, reply_markup=panels.add_contact(phrases, lang))
+        await state.set_state(FormSearchUser.add_state)
     else:
-        await message.answer("user not added in birthday list", reply_markup=ReplyKeyboardRemove())
+        text = phrases['phrases']['userNotFound'][lang]
+        await message.answer(text=text, reply_markup=panels.remove_panel())
+        await state.clear()
+
+
+@dp.message(FormSearchUser.add_state)
+async def add_contact(message: Message, state: FSMContext):
+    tg_id = str(message.from_user.id)
+    usr_id = datasource.get_id(tg_id)
+    contact_id = dict(await state.get_data()).get('contact_id')
+    lang = datasource.get_lang(usr_id)
+
+    if message.text == phrases['phrases']['addBirthday'][lang]:
+        if usr_id != contact_id:
+            if not datasource.check_relationship(usr_id, contact_id):
+                text = phrases['phrases']['userAdded'][lang]
+                datasource.check_relationship(usr_id, contact_id)
+                datasource.add_relationship(usr_id, contact_id)
+            else:
+                text = phrases['phrases']['alreadyFriend'][lang]
+        else:
+            text = phrases['phrases']['addSelf'][lang]
+    else:
+        text = phrases['phrases']['userNotAdded'][lang]
+    await message.answer(text=text, reply_markup=panels.commands_panel())
+    await state.clear()
