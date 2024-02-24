@@ -1,7 +1,7 @@
 from aiogram.types import Message
 from aiogram.filters import Command
 
-from main import dp, datasource, phrases, panels, tools
+from main import dp, tools, datasource, phrases, panels
 
 
 @dp.message(Command('birthday_list'))

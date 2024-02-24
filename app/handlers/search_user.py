@@ -1,10 +1,9 @@
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message
 from aiogram.enums.content_type import ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
-from aiogram import F
 
-from main import dp, datasource, phrases, panels, tools
+from main import dp, tools, datasource, phrases, panels
 from states import FormSearchUser
 
 

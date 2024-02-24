@@ -1,63 +1,7 @@
-from datetime import date, datetime
-from .user_model import UserModel
+from datetime import date
 
 
 class Tools:
-    # @staticmethod
-    # def check_correct_data(input_date: dict):
-    #     year = 2000
-    #     month = input_date.get('month_of_birth')
-    #     day = input_date.get('day_of_birth')
-    #
-    #     try:
-    #         if int(year) < 1800 or date.today().year < int(year) + 1:
-    #             return False
-    #         if not month:
-    #             month = '01'
-    #         if not day:
-    #             day = '01'
-    #
-    #         if datetime.strptime(f"{year}-{month}-{day}", "%Y-%m-%d"):
-    #             return True
-    #         else:
-    #             raise ValueError
-    #     except ValueError:
-    #         return False
-
-
-    # @staticmethod
-    # def parse_postgres_string_data(postgres_string: str) -> str:
-    #     del_char = '"'
-    #     data = str(postgres_string).replace('(', '').replace(')', '').split(',')
-    #
-    #     nickname = data[0].replace(del_char, '')
-    #     username = data[1].replace(del_char, '')
-    #     phone_number = data[3]
-    #     language = data[4]
-    #     birth_date = Tools.convert_postgres_date_to_tg_date(data[2])
-    #
-    #     answer_string = f"Nickname: {nickname}\n" \
-    #                     f"Username: {username}\n" \
-    #                     f"Language: {language}\n" \
-    #                     f"Birthday: {birth_date}\n" \
-    #                     f"Phone number: {phone_number}"
-    #
-    #     return answer_string
-
-
-    # @staticmethod
-    # def parse_postgres_id(data_string):
-    #     data = str(data_string).replace('(', '').replace(')', '').split(',')
-    #     return data[0]
-
-
-    # @staticmethod
-    # def make_date_string(date_string):
-    #     month = int(date_string.get('month_of_birth'))
-    #     day = int(date_string.get('day_of_birth'))
-    #     return date(2000, month, day)
-
-
     @staticmethod
     def get_month_number(string_month: str, lang: str) -> int:
         months_en = [

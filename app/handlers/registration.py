@@ -2,7 +2,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-from main import dp, tools, datasource, panels, phrases
+from main import dp, tools, datasource, phrases, panels
 from states import FormRegistration
 
 

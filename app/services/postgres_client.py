@@ -1,9 +1,6 @@
 import psycopg2
 
-from datetime import date
-
 from .datasource import DataSource
-from .tools import Tools
 from config import Config
 
 class IsDataBaseSource(DataSource):

@@ -2,8 +2,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from states import FormChangeUserProfile
 from main import dp, tools, datasource, phrases, panels
+from states import FormChangeUserProfile
 
 @dp.message(Command('change_profile'))
 async def change_user_profile_command_handler(message: Message, state: FSMContext):
