@@ -261,6 +261,33 @@ class IsDataBaseSource(DataSource):
         return data
 
 
+    def get_relationship_ids(self, usr_id: int):
+        with self.connect:
+            self.cursor.execute(
+                """
+                select friend_id
+                from user_relations
+                where user_id = %s;
+                """,
+                (usr_id,)
+            )
+            data = self.cursor.fetchall()
+            return list(int(''.join(map(str, friend_id))) for friend_id in data)
+
+
+    def get_birthday(self, usr_id: int):
+        with self.connect:
+            self.cursor.execute(
+                """
+                select (user_name, language, birth_date, phone_number)
+                from tg_users
+                where user_id = %s;
+                """,
+                (usr_id,)
+            )
+            data = self.cursor.fetchone()[0]
+            return data
+
 
 
 

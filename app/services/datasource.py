@@ -38,6 +38,11 @@ class DataSource:
     def get_id_by_nickname(self, nickname: str):
         pass
 
+    def get_relationship_ids(self, usr_id: int):
+        pass
+
+    def get_birthday(self, usr_id: int):
+        pass
 
 
 

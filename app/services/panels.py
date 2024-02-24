@@ -69,7 +69,7 @@ class Panels:
             [KeyboardButton(text='/change_profile')],
             [KeyboardButton(text='/delete_profile')],
             [KeyboardButton(text='/search_user')],
-            [KeyboardButton(text='/show_my_birthday_list')]
+            [KeyboardButton(text='/birthday_list')]
         ]
         commands_panel = ReplyKeyboardMarkup(keyboard=command_buttons)
         return commands_panel

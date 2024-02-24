@@ -207,6 +207,10 @@
     "addSelf": {
       "Ru": "Вы не можете добавить себя в список дней рождений",
       "En": "You can't add yourself to the birthday list"
+    },
+    "emptyBirthdayList": {
+      "Ru": "Ваш список дней рождений пуст",
+      "En": "Your birthday list is empty"
     }
   }
 }

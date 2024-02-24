@@ -167,25 +167,25 @@ class Tools:
             return 0
 
 
-    # @staticmethod
-    # def format_relations_birthdays(data):
-    #     return list(int(''.join(map(str,friend_id))) for friend_id in data)
+    @staticmethod
+    def format_info_about_friend(data):
+        data = str(data).replace('(', '').replace(')', '').split(',')
+        name = data[0].replace('"', '')
+        match data[1]:
+            case 'Ru':
+                lang = "🇷🇺"
+            case 'En':
+                lang = "🇬🇧"
+            case _:
+                lang = "🇬🇧"
+        birth_date = Tools.parse_postgres_date(data[2], lang)
+        phone_number = data[3]
 
+        output_data = f"Name: {name}\n" \
+                      f"Birthday 🎁: {birth_date}\n" \
+                      f"Phone number ☎️: {phone_number}\n\n"
 
-    # @staticmethod
-    # def format_info_about_friend(data):
-    #     del_char = '"'
-    #     data = str(data).replace('(', '').replace(')', '').split(',')
-    #
-    #     username = data[0].replace(del_char, '')
-    #     phone_number = data[1]
-    #     birth_date = Tools.convert_postgres_date_to_tg_date(data[2])
-    #
-    #     answer_string = f"Nick: {username}\n" \
-    #                     f"Phone number ☎️: {phone_number}\n" \
-    #                     f"Birthday 🎁: {birth_date}\n"
-    #
-    #     return answer_string
+        return output_data
 
 
     @staticmethod
