@@ -1,25 +1,34 @@
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
-from aiogram import F
 
-from services import Panels
-from main import dp, datasource
+from main import dp, datasource, panels, phrases
+from states import FormDeleteProfile
 
 
-@dp.message(Command('delete_my_profile'))
-async def delete_user_profile_command_handler(message: Message):
-    is_exist_user_profile = datasource.check_exist_user(str(message.from_user.id))
-    if is_exist_user_profile:
-        await message.answer("Are you sure?", reply_markup=Panels.delete_profile())
+
+@dp.message(Command('delete_profile'))
+async def delete_user_profile_command_handler(message: Message, state: FSMContext):
+    tg_id = str(message.from_user.id)
+    usr_id = datasource.get_id(tg_id)
+    if usr_id:
+        lang = datasource.get_lang(usr_id)
+        text = phrases['phrases']['confirmation'][lang]
+        await message.answer(text=text, reply_markup=panels.delete_profile(phrases, lang))
+        await state.set_state(FormDeleteProfile.delete_state)
     else:
         await message.answer("You are not registered")
 
 
-@dp.message((F.text == 'delete profile ✅') | (F.text == 'do not delete profile ❌'))
+@dp.message(FormDeleteProfile.delete_state)
 async def delete_profile(message: Message):
-    if message.text == 'delete profile ✅':
-        user_id = datasource.get_id_user(str(message.from_user.id))
-        datasource.delete_profile(user_id)
-        await message.answer("Your profile has been deleted", reply_markup=ReplyKeyboardRemove())
-    elif message.text == 'do not delete profile ❌':
-        await message.answer("Your profile has not been deleted", reply_markup=ReplyKeyboardRemove())
+    tg_id = str(message.from_user.id)
+    usr_id = datasource.get_id(tg_id)
+    lang = datasource.get_lang(usr_id)
+    if message.text == phrases['phrases']['questDelProfile'][lang]:
+        text = phrases['phrases']['messageDelProfile'][lang]
+        datasource.delete_profile(usr_id)
+        await message.answer(text=text, reply_markup=panels.remove_panel())
+    else:
+        text = phrases['phrases']['messageNotDelProfile'][lang]
+        await message.answer(text=text, reply_markup=panels.commands_panel())

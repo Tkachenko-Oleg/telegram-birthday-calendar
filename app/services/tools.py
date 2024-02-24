@@ -99,30 +99,49 @@ class Tools:
 
 
 
-    # @staticmethod
-    # def convert_postgres_date_to_tg_date(data: str) -> str:
-    #     months = [
-    #         'January ❄️',
-    #         'February ❄️',
-    #         'March 🌱',
-    #         'April 🌱',
-    #         'May 🌱',
-    #         'June ☀️',
-    #         'July ☀️',
-    #         'August ☀️',
-    #         'September 🍁',
-    #         'October 🍁',
-    #         'november 🍁',
-    #         'December ❄️'
-    #     ]
-    #
-    #     date_list = data.split('-')
-    #     month_index = int(date_list[1]) - 1
-    #     day = int(date_list[2])
-    #
-    #     answer_date = f"{day} {months[month_index]}"
-    #
-    #     return answer_date
+    @staticmethod
+    def parse_postgres_date(data: str, lang: str) -> str:
+        months_en = [
+            'January ❄️',
+            'February ❄️',
+            'March 🌱',
+            'April 🌱',
+            'May 🌱',
+            'June ☀️',
+            'July ☀️',
+            'August ☀️',
+            'September 🍁',
+            'October 🍁',
+            'november 🍁',
+            'December ❄️'
+        ]
+        months_ru = [
+            'Январь ❄️',
+            'Февраль ❄️',
+            'Март 🌱',
+            'Апрель 🌱',
+            'Май 🌱',
+            'Июнь ☀️',
+            'Июль ☀️',
+            'Август ☀️',
+            'Сентябрь 🍁',
+            'Октябрь 🍁',
+            'Ноябрь 🍁',
+            'Декабрь ❄️'
+        ]
+
+        date_list = data.split('-')
+        month_index = int(date_list[1]) - 1
+        day = int(date_list[2])
+        match lang:
+            case 'En':
+                month = months_en[month_index]
+            case 'Ru':
+                month = months_ru[month_index]
+            case _:
+                month = 0
+
+        return f"{day} {month}"
 
 
     @staticmethod
@@ -185,3 +204,24 @@ class Tools:
         }
 
         return output_data
+
+
+    @staticmethod
+    def parse_postgres(data: tuple) -> dict:
+        data = str(data).replace('(', '').replace(')', '').split(',')
+
+        nickname = data[0].replace('"', '')
+        name = data[1].replace('"', '')
+        phone_number = data[3]
+        language = data[4]
+        birth_date = Tools.parse_postgres_date(data[2], language)
+
+        data_dict = {
+            'nick': nickname,
+            'name': name,
+            'birth': birth_date,
+            'phone': phone_number,
+            'lang': language
+        }
+
+        return data_dict

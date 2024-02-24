@@ -15,7 +15,7 @@ async def start_registration_command_handler(message: Message, state: FSMContext
     else:
         lang = datasource.get_lang(datasource.get_id(usr_id))
         text = phrases['phrases']['alreadyReg'][lang]
-        await message.answer(text=text)
+        await message.answer(text=text, reply_markup=panels.commands_panel())
 
 
 @dp.message(FormRegistration.language)

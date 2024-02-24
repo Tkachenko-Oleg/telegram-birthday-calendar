@@ -1,6 +1,8 @@
 from aiogram.fsm.state import State, StatesGroup
 
 class FormChangeUserProfile(StatesGroup):
+    choice = State()
+    language = State()
     name = State()
-    month_of_birth = State()
-    day_of_birth = State()
+    birth_month = State()
+    birthday = State()

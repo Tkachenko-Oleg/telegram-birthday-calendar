@@ -32,7 +32,7 @@ class IsDataBaseSource(DataSource):
                 """
                 create table if not exists user_ids (
                 user_id bigserial not null primary key,
-                tg_id varchar(50)
+                tg_id varchar(50) not null unique
                 );
                 """
             )
@@ -121,7 +121,7 @@ class IsDataBaseSource(DataSource):
             self.connect.commit()
 
 
-    def get_lang(self, usr_id: str) -> str:
+    def get_lang(self, usr_id: int) -> str:
         with self.connect:
             self.cursor.execute(
                 """
@@ -136,24 +136,86 @@ class IsDataBaseSource(DataSource):
             return lang
 
 
+    def user_profile(self, usr_id: int) -> tuple:
+        with self.connect:
+            self.cursor.execute(
+                """
+                select (user_nickname, user_name, birth_date, phone_number, language)
+                from tg_users
+                where user_id = %s;
+                """,
+                (usr_id,)
+            )
+            data = self.cursor.fetchone()[0]
+            return data
 
 
+    def change_language(self, usr_id: int, lang: str) -> None:
+        with self.connect:
+            self.cursor.execute(
+                """
+                update tg_users
+                set language = %s
+                where user_id = %s;
+                """,
+                (lang, usr_id)
+            )
+            self.connect.commit()
 
 
+    def change_name(self, usr_id: int, name: str) -> None:
+        with self.connect:
+            self.cursor.execute(
+                """
+                update tg_users
+                set user_name = %s
+                where user_id = %s;
+                """,
+                (name, usr_id)
+            )
+            self.connect.commit()
 
 
+    def change_birthday(self, usr_id: int, birth_month: int, birthday: int) -> None:
+        with self.connect:
+            self.cursor.execute(
+                """
+                update tg_users
+                set birth_date = %s
+                where user_id = %s;
+                """,
+                (f'2000-{birth_month}-{birthday}', usr_id)
+            )
+            self.connect.commit()
 
 
+    def delete_profile(self, usr_id: int):
+        with self.connect:
+            self.cursor.execute(
+                """
+                delete from user_relations
+                where user_id = %s or friend_id = %s;
+                """,
+                (usr_id, usr_id)
+            )
 
+            self.cursor.execute(
+                """
+                delete from tg_users
+                where user_id = %s;
+                """,
+                (usr_id,)
+            )
 
+            self.cursor.execute(
+                """
+                delete from user_ids
+                where user_id = %s;
+                """,
+                (usr_id,)
+            )
 
-
-
-
-
-
-
-
+            self.connect.commit()
 
 
 
@@ -203,362 +265,362 @@ class IsDataBaseSource(DataSource):
     #         self.connect.commit()
 
 
-    def check_exist_user(self, tg_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select exists (
-                select 1
-                from tg_users 
-                where tg_id = %s)
-                """,
-                (tg_id,)
-            )
-
-        if self.cursor.fetchone()[0]:
-            return True
-        else:
-            return False
-
-    def check_exist_nickname(self, nickname):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select exists (
-                select 1
-                from tg_users
-                where user_nick = %s)
-                """,
-                (nickname,)
-            )
-
-        if self.cursor.fetchone()[0]:
-            return True
-        else:
-            return False
-
-
-    def show_user_profile(self, tg_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select (user_nick, user_name, birth_date, phone_number, language)
-                from tg_users 
-                where tg_id = %s
-                """,
-                (tg_id,)
-            )
-        return Tools.parse_postgres_string_data(self.cursor.fetchone()[0])
-
-
-    def delete_profile(self, user_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                delete from user_relations where user_id = %s or friend_id = %s
-                """,
-                (user_id, user_id,)
-            )
-            self.cursor.execute(
-                """
-                delete from tg_users where user_id = %s
-                """,
-                (user_id,)
-            )
-            self.connect.commit()
-
-
-    def change_user_profile(self, tg_id, type_data, changed_data):
-        with self.connect:
-            if type_data == 'language':
-                self.cursor.execute(
-                    """
-                    update tg_users set language = %s where tg_id = %s
-                    """,
-                    (changed_data, tg_id)
-                )
-            elif type_data == 'user_name':
-                changed_data = changed_data.get('name')
-                self.cursor.execute(
-                    """
-                    update tg_users set user_name = %s where tg_id = %s
-                    """,
-                    (changed_data, tg_id)
-                )
-            elif type_data == 'birthday':
-                changed_data = Tools.make_date_string(changed_data)
-                self.cursor.execute(
-                    """
-                    update tg_users set birth_date = %s where tg_id = %s
-                    """,
-                    (changed_data, tg_id)
-                )
-            else:
-                pass
-
-            self.connect.commit()
-
-
-    def search_user_by_nickname(self, nickname):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select user_nick, user_name, birth_date, phone_number, language
-                from tg_users 
-                where user_nick = %s
-                """,
-                (nickname,)
-            )
-
-        data = self.cursor.fetchone()
-        if data:
-            info = Tools.parse_postgres_string_data(data)
-            friend_id =Tools.parse_postgres_id(data)
-            return info, friend_id
-        else:
-            return None, None
-
-
-    def search_user_by_contact_id(self, tg_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select user_nick, user_name, birth_date, phone_number, language
-                from tg_users
-                where tg_id = %s
-                """,
-                (tg_id,)
-            )
-
-        data = self.cursor.fetchone()
-        if data:
-            return Tools.parse_postgres_string_data(data)
-        else:
-            return None
-
-
-    def search_user_info(self, tg_id = None, nickname = None):
-        if tg_id or nickname:
-            if tg_id:
-                with self.connect:
-                    self.cursor.execute(
-                        """
-                            select (user_nick, user_name, birth_date, phone_number, language)
-                            from tg_users
-                            where tg_id = %s
-                        """,
-                        (tg_id,)
-                    )
-
-            else:
-                with self.connect:
-                    self.cursor.execute(
-                        """
-                            select (user_nick, user_name, birth_date, phone_number, language)
-                            from tg_users
-                            where user_nick = %s
-                        """,
-                        (nickname,)
-                    )
-
-            try:
-                data = self.cursor.fetchone()[0]
-                return Tools.parse_postgres_string_data(data)
-            except TypeError:
-                return None
-        else:
-            return None
-
-
-    def search_user_id_info(self, tg_id = None, nickname = None):
-        if tg_id or nickname:
-            if tg_id:
-                with self.connect:
-                    self.cursor.execute(
-                        """
-                            select user_id
-                            from tg_users
-                            where tg_id = %s
-                        """,
-                        (tg_id,)
-                    )
-            else:
-                with self.connect:
-                    self.cursor.execute(
-                        """
-                            select user_id
-                            from tg_users
-                            where user_nick = %s
-                        """,
-                        (nickname,)
-                    )
-
-            try:
-                friend_id = self.cursor.fetchone()[0]
-                return friend_id
-            except TypeError:
-                return None
-        else:
-            return None
-
-
-    def search_contact(self, tg_id = None, nickname = None):
-        if tg_id:
-            with self.connect:
-                self.cursor.execute(
-                    """
-                        select user_id
-                        from tg_users
-                        where tg_id = %s
-                    """,
-                    (tg_id,)
-                )
-        elif nickname:
-            with self.connect:
-                self.cursor.execute(
-                    """
-                        select user_id
-                        from tg_users
-                        where user_nick = %s
-                    """,
-                    (nickname,)
-                )
-        else:
-            return None
-        try:
-            data = self.cursor.fetchone()[0]
-            return data
-        except TypeError:
-            return None
-
-
-    def search_contact_info(self, tg_id = None, nickname = None):
-        if tg_id:
-            with self.connect:
-                self.cursor.execute(
-                    """
-                        select (user_nick, user_name, birth_date, phone_number, language)
-                        from tg_users
-                        where tg_id = %s
-                    """,
-                    (tg_id,)
-                )
-
-        elif nickname:
-            with self.connect:
-                self.cursor.execute(
-                    """
-                        select (user_nick, user_name, birth_date, phone_number, language)
-                        from tg_users
-                        where user_nick = %s
-                    """,
-                    (nickname,)
-                )
-        else:
-            return None
-        try:
-            data = self.cursor.fetchone()[0]
-            return Tools.parse_postgres_string_data(data)
-        except TypeError:
-            return None
-
-
-    def get_id_user(self, tg_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select user_id
-                from tg_users
-                where tg_id = %s
-                """,
-                (tg_id,)
-            )
-        try:
-            data = self.cursor.fetchone()[0]
-            return data
-        except TypeError:
-            return None
-
-
-    # def search_user_by_phone_number(self, phone_number):
+    # def check_exist_user(self, tg_id):
     #     with self.connect:
     #         self.cursor.execute(
     #             """
-    #             select user_id, user_nick, user_name, birth_date, phone_number, language
+    #             select exists (
+    #             select 1
+    #             from tg_users
+    #             where tg_id = %s)
+    #             """,
+    #             (tg_id,)
+    #         )
+    #
+    #     if self.cursor.fetchone()[0]:
+    #         return True
+    #     else:
+    #         return False
+    #
+    # def check_exist_nickname(self, nickname):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select exists (
+    #             select 1
+    #             from tg_users
+    #             where user_nick = %s)
+    #             """,
+    #             (nickname,)
+    #         )
+    #
+    #     if self.cursor.fetchone()[0]:
+    #         return True
+    #     else:
+    #         return False
+    #
+    #
+    # def show_user_profile(self, tg_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select (user_nick, user_name, birth_date, phone_number, language)
+    #             from tg_users
+    #             where tg_id = %s
+    #             """,
+    #             (tg_id,)
+    #         )
+    #     return Tools.parse_postgres_string_data(self.cursor.fetchone()[0])
+    #
+    #
+    # def delete_profile(self, user_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             delete from user_relations where user_id = %s or friend_id = %s
+    #             """,
+    #             (user_id, user_id,)
+    #         )
+    #         self.cursor.execute(
+    #             """
+    #             delete from tg_users where user_id = %s
+    #             """,
+    #             (user_id,)
+    #         )
+    #         self.connect.commit()
+    #
+    #
+    # def change_user_profile(self, tg_id, type_data, changed_data):
+    #     with self.connect:
+    #         if type_data == 'language':
+    #             self.cursor.execute(
+    #                 """
+    #                 update tg_users set language = %s where tg_id = %s
+    #                 """,
+    #                 (changed_data, tg_id)
+    #             )
+    #         elif type_data == 'user_name':
+    #             changed_data = changed_data.get('name')
+    #             self.cursor.execute(
+    #                 """
+    #                 update tg_users set user_name = %s where tg_id = %s
+    #                 """,
+    #                 (changed_data, tg_id)
+    #             )
+    #         elif type_data == 'birthday':
+    #             changed_data = Tools.make_date_string(changed_data)
+    #             self.cursor.execute(
+    #                 """
+    #                 update tg_users set birth_date = %s where tg_id = %s
+    #                 """,
+    #                 (changed_data, tg_id)
+    #             )
+    #         else:
+    #             pass
+    #
+    #         self.connect.commit()
+    #
+    #
+    # def search_user_by_nickname(self, nickname):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select user_nick, user_name, birth_date, phone_number, language
     #             from tg_users
     #             where user_nick = %s
     #             """,
-    #             (phone_number,)
+    #             (nickname,)
     #         )
     #
     #     data = self.cursor.fetchone()
     #     if data:
-    #         info = Tools.parse_postgres_string(data)
-    #         friend_id = Tools.parse_postgres_id(data)
+    #         info = Tools.parse_postgres_string_data(data)
+    #         friend_id =Tools.parse_postgres_id(data)
     #         return info, friend_id
     #     else:
     #         return None, None
-
-
-    def check_the_relationship_database(self, user_id, friend_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select exists (
-                select 1
-                from user_relations
-                where user_id = %s and friend_id = %s)
-                """,
-                (user_id, friend_id)
-            )
-
-            data = self.cursor.fetchone()[0]
-
-            if data:
-                return False
-            else:
-                return True
-
-
-    def add_user_birthday_to_relation_database(self, user_id, contact_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                insert into user_relations
-                (user_id, friend_id) 
-                values (%s, %s)
-                """,
-                (user_id, contact_id)
-            )
-            self.connect.commit()
-
-
-    def show_list_of_birthdays(self, user_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select friend_id
-                from user_relations
-                where user_id = %s
-                """,
-                (user_id,)
-            )
-            data = self.cursor.fetchall()
-            return Tools.format_relations_birthdays(data)
-
-
-    def get_info_about_birthday(self, user_id):
-        with self.connect:
-            self.cursor.execute(
-                """
-                select (user_name, phone_number, birth_date)
-                from tg_users
-                where user_id = %s
-                """,
-                (user_id,)
-            )
-            data = self.cursor.fetchone()[0]
-            return Tools.format_info_about_friend(data)
+    #
+    #
+    # def search_user_by_contact_id(self, tg_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select user_nick, user_name, birth_date, phone_number, language
+    #             from tg_users
+    #             where tg_id = %s
+    #             """,
+    #             (tg_id,)
+    #         )
+    #
+    #     data = self.cursor.fetchone()
+    #     if data:
+    #         return Tools.parse_postgres_string_data(data)
+    #     else:
+    #         return None
+    #
+    #
+    # def search_user_info(self, tg_id = None, nickname = None):
+    #     if tg_id or nickname:
+    #         if tg_id:
+    #             with self.connect:
+    #                 self.cursor.execute(
+    #                     """
+    #                         select (user_nick, user_name, birth_date, phone_number, language)
+    #                         from tg_users
+    #                         where tg_id = %s
+    #                     """,
+    #                     (tg_id,)
+    #                 )
+    #
+    #         else:
+    #             with self.connect:
+    #                 self.cursor.execute(
+    #                     """
+    #                         select (user_nick, user_name, birth_date, phone_number, language)
+    #                         from tg_users
+    #                         where user_nick = %s
+    #                     """,
+    #                     (nickname,)
+    #                 )
+    #
+    #         try:
+    #             data = self.cursor.fetchone()[0]
+    #             return Tools.parse_postgres_string_data(data)
+    #         except TypeError:
+    #             return None
+    #     else:
+    #         return None
+    #
+    #
+    # def search_user_id_info(self, tg_id = None, nickname = None):
+    #     if tg_id or nickname:
+    #         if tg_id:
+    #             with self.connect:
+    #                 self.cursor.execute(
+    #                     """
+    #                         select user_id
+    #                         from tg_users
+    #                         where tg_id = %s
+    #                     """,
+    #                     (tg_id,)
+    #                 )
+    #         else:
+    #             with self.connect:
+    #                 self.cursor.execute(
+    #                     """
+    #                         select user_id
+    #                         from tg_users
+    #                         where user_nick = %s
+    #                     """,
+    #                     (nickname,)
+    #                 )
+    #
+    #         try:
+    #             friend_id = self.cursor.fetchone()[0]
+    #             return friend_id
+    #         except TypeError:
+    #             return None
+    #     else:
+    #         return None
+    #
+    #
+    # def search_contact(self, tg_id = None, nickname = None):
+    #     if tg_id:
+    #         with self.connect:
+    #             self.cursor.execute(
+    #                 """
+    #                     select user_id
+    #                     from tg_users
+    #                     where tg_id = %s
+    #                 """,
+    #                 (tg_id,)
+    #             )
+    #     elif nickname:
+    #         with self.connect:
+    #             self.cursor.execute(
+    #                 """
+    #                     select user_id
+    #                     from tg_users
+    #                     where user_nick = %s
+    #                 """,
+    #                 (nickname,)
+    #             )
+    #     else:
+    #         return None
+    #     try:
+    #         data = self.cursor.fetchone()[0]
+    #         return data
+    #     except TypeError:
+    #         return None
+    #
+    #
+    # def search_contact_info(self, tg_id = None, nickname = None):
+    #     if tg_id:
+    #         with self.connect:
+    #             self.cursor.execute(
+    #                 """
+    #                     select (user_nick, user_name, birth_date, phone_number, language)
+    #                     from tg_users
+    #                     where tg_id = %s
+    #                 """,
+    #                 (tg_id,)
+    #             )
+    #
+    #     elif nickname:
+    #         with self.connect:
+    #             self.cursor.execute(
+    #                 """
+    #                     select (user_nick, user_name, birth_date, phone_number, language)
+    #                     from tg_users
+    #                     where user_nick = %s
+    #                 """,
+    #                 (nickname,)
+    #             )
+    #     else:
+    #         return None
+    #     try:
+    #         data = self.cursor.fetchone()[0]
+    #         return Tools.parse_postgres_string_data(data)
+    #     except TypeError:
+    #         return None
+    #
+    #
+    # def get_id_user(self, tg_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select user_id
+    #             from tg_users
+    #             where tg_id = %s
+    #             """,
+    #             (tg_id,)
+    #         )
+    #     try:
+    #         data = self.cursor.fetchone()[0]
+    #         return data
+    #     except TypeError:
+    #         return None
+    #
+    #
+    # # def search_user_by_phone_number(self, phone_number):
+    # #     with self.connect:
+    # #         self.cursor.execute(
+    # #             """
+    # #             select user_id, user_nick, user_name, birth_date, phone_number, language
+    # #             from tg_users
+    # #             where user_nick = %s
+    # #             """,
+    # #             (phone_number,)
+    # #         )
+    # #
+    # #     data = self.cursor.fetchone()
+    # #     if data:
+    # #         info = Tools.parse_postgres_string(data)
+    # #         friend_id = Tools.parse_postgres_id(data)
+    # #         return info, friend_id
+    # #     else:
+    # #         return None, None
+    #
+    #
+    # def check_the_relationship_database(self, user_id, friend_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select exists (
+    #             select 1
+    #             from user_relations
+    #             where user_id = %s and friend_id = %s)
+    #             """,
+    #             (user_id, friend_id)
+    #         )
+    #
+    #         data = self.cursor.fetchone()[0]
+    #
+    #         if data:
+    #             return False
+    #         else:
+    #             return True
+    #
+    #
+    # def add_user_birthday_to_relation_database(self, user_id, contact_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             insert into user_relations
+    #             (user_id, friend_id)
+    #             values (%s, %s)
+    #             """,
+    #             (user_id, contact_id)
+    #         )
+    #         self.connect.commit()
+    #
+    #
+    # def show_list_of_birthdays(self, user_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select friend_id
+    #             from user_relations
+    #             where user_id = %s
+    #             """,
+    #             (user_id,)
+    #         )
+    #         data = self.cursor.fetchall()
+    #         return Tools.format_relations_birthdays(data)
+    #
+    #
+    # def get_info_about_birthday(self, user_id):
+    #     with self.connect:
+    #         self.cursor.execute(
+    #             """
+    #             select (user_name, phone_number, birth_date)
+    #             from tg_users
+    #             where user_id = %s
+    #             """,
+    #             (user_id,)
+    #         )
+    #         data = self.cursor.fetchone()[0]
+    #         return Tools.format_info_about_friend(data)
 
 
 

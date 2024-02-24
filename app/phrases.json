@@ -113,12 +113,12 @@
       "En": "Change date of birth"
     },
     "questDelProfile": {
-      "Ru": "Удалить профиль",
-      "En": "Delete profile"
+      "Ru": "Удалить профиль ✅",
+      "En": "Delete profile ✅"
     },
     "questNotDelProfile": {
-      "Ru": "Не удалять профиль",
-      "En": "Do not delete profile"
+      "Ru": "Не удалять профиль ❌",
+      "En": "Do not delete profile ❌"
     },
     "searchContact": {
       "Ru": "Искать по контакту",
@@ -190,7 +190,11 @@
     },
     "longMessage": {
       "Ru": "Максимальная длина сообщения - 50 символов",
-      "En": "The maximum message length is 50 characters."
+      "En": "The maximum message length is 50 characters"
+    },
+    "updateProfile": {
+      "Ru": "Профиль обновлен",
+      "En": "Profile updated"
     }
   }
 }

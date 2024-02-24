@@ -65,9 +65,9 @@ class Panels:
     def commands_panel():
         command_buttons = [
             [KeyboardButton(text='/help')],
-            [KeyboardButton(text='/show_my_profile')],
-            [KeyboardButton(text='/change_my_profile')],
-            [KeyboardButton(text='/delete_my_profile')],
+            [KeyboardButton(text='/my_profile')],
+            [KeyboardButton(text='/change_profile')],
+            [KeyboardButton(text='/delete_profile')],
             [KeyboardButton(text='/search_user')],
             [KeyboardButton(text='/show_my_birthday_list')]
         ]
@@ -75,31 +75,27 @@ class Panels:
         return commands_panel
 
 
-    # @staticmethod
-    # def changes_panel():
-    #     button_changes = [[
-    #         KeyboardButton(text='change language'),
-    #         KeyboardButton(text='change name'),
-    #         KeyboardButton(text='change birthday')
-    #     ]]
-    #     panel = ReplyKeyboardMarkup(keyboard=button_changes, resize_keyboard=True)
-    #     return panel
-    #
-    #
-    # @staticmethod
-    # def change_language_panel():
-    #     button_lang = [[KeyboardButton(text='Ру 🇷🇺'), KeyboardButton(text='En 🇬🇧')]]
-    #     panel = ReplyKeyboardMarkup(keyboard=button_lang, resize_keyboard=True)
-    #     return panel
-    #
-    #
-    # @staticmethod
-    # def delete_profile():
-    #     button_delete = [[KeyboardButton(text='delete profile ✅'), KeyboardButton(text='do not delete profile ❌')]]
-    #     panel = ReplyKeyboardMarkup(keyboard=button_delete, resize_keyboard=True)
-    #     return panel
-    #
-    #
+    @staticmethod
+    def changes_panel(phrases, lang):
+        change_buttons = [[
+            KeyboardButton(text=phrases['phrases']['changeLanguage'][lang]),
+            KeyboardButton(text=phrases['phrases']['changeName'][lang]),
+            KeyboardButton(text=phrases['phrases']['changeBirthday'][lang])
+        ]]
+        panel = ReplyKeyboardMarkup(keyboard=change_buttons, resize_keyboard=True)
+        return panel
+
+
+    @staticmethod
+    def delete_profile(phrases, lang):
+        delete_button = [[
+            KeyboardButton(text=phrases['phrases']['questDelProfile'][lang]),
+            KeyboardButton(text=phrases['phrases']['questNotDelProfile'][lang])
+        ]]
+        panel = ReplyKeyboardMarkup(keyboard=delete_button, resize_keyboard=True)
+        return panel
+
+
     # @staticmethod
     # def search_user_methods(request_id: int):
     #     buttons = [[KeyboardButton(text='search with contact',
