@@ -150,7 +150,7 @@ class IsDataBaseSource(DataSource):
                 """
                 update tg_users
                 set language = %s
-                where user_id = %s;
+                where tg_id = %s;
                 """,
                 (lang, tg_id)
             )

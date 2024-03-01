@@ -7,10 +7,8 @@ from states import FormChangeUserProfile
 
 @dp.message(Command('change_profile'))
 async def change_user_profile_command_handler(message: Message, state: FSMContext):
-    tg_id = str(message.from_user.id)
-    usr_id = datasource.get_id(tg_id)
-    if usr_id:
-        lang = datasource.get_lang(usr_id)
+    if datasource.is_user_exist(tg_id=message.from_user.id):
+        lang = datasource.get_lang(tg_id=message.from_user.id)
         text = phrases['phrases']['changeSetting'][lang]
         await state.set_state(FormChangeUserProfile.choice)
         await message.answer(text=text, reply_markup=panels.changes_panel(phrases, lang))
@@ -20,10 +18,7 @@ async def change_user_profile_command_handler(message: Message, state: FSMContex
 
 @dp.message(FormChangeUserProfile.choice)
 async def identify_change(message: Message, state: FSMContext):
-    tg_id = str(message.from_user.id)
-    usr_id = datasource.get_id(tg_id)
-    lang = datasource.get_lang(usr_id)
-
+    lang = datasource.get_lang(tg_id=message.from_user.id)
     if message.text == phrases['phrases']['changeLanguage'][lang]:
         text = phrases['phrases']['selectLanguage'][lang]
         await message.answer(text=text, reply_markup=panels.language_panel())
@@ -47,54 +42,53 @@ async def identify_change(message: Message, state: FSMContext):
 
 @dp.message(FormChangeUserProfile.language)
 async def change_language(message: Message, state: FSMContext):
-    tg_id = str(message.from_user.id)
-    usr_id = datasource.get_id(tg_id)
-    lang = datasource.get_lang(usr_id)
+    lang = datasource.get_lang(tg_id=message.from_user.id)
+    is_lang_selected = True
+    curr_lang = 'En'
 
-    match message.text:
-        case 'Русский 🇷🇺':
-            datasource.change_language(usr_id, 'Ru')
-            text = phrases['phrases']['updateProfile']['Ru']
-            await message.answer(text=text, reply_markup=panels.commands_panel())
-            await state.clear()
-        case 'English 🇬🇧':
-            datasource.change_language(usr_id, 'En')
-            text = phrases['phrases']['updateProfile']['En']
-            await message.answer(text=text, reply_markup=panels.commands_panel())
-            await state.clear()
-        case _:
-            text = phrases['phrases']['selectLanguage'][lang]
-            await message.answer(text=text, reply_markup=panels.language_panel())
+    if message.text == "Русский 🇷🇺":
+        curr_lang = 'Ru'
+    elif message.text == "English 🇬🇧":
+        curr_lang = 'En'
+    else:
+        is_lang_selected = False
+
+    if is_lang_selected:
+        text = phrases['phrases']['updateProfile'][curr_lang]
+        datasource.change_language(tg_id=message.from_user.id, lang=curr_lang)
+        await message.answer(text=text, reply_markup=panels.commands_panel())
+        await state.clear()
+    else:
+        text = phrases['phrases']['selectLanguage'][lang]
+        await message.answer(text=text, reply_markup=panels.language_panel())
 
 
 @dp.message(FormChangeUserProfile.name)
 async def change_name(message: Message, state: FSMContext):
-    tg_id = str(message.from_user.id)
-    usr_id = datasource.get_id(tg_id)
-    lang = datasource.get_lang(usr_id)
-    mes_text = message.text
+    lang = datasource.get_lang(tg_id=message.from_user.id)
+    message_type = tools.is_correct_name_message(message.text)
+    is_name_changed = False
+    panel = None
 
-    if mes_text:
-        if len(mes_text) <= 50:
-            datasource.change_name(usr_id, mes_text)
-            text = phrases['phrases']['updateProfile']['Ru']
-            await message.answer(text=text, reply_markup=panels.commands_panel())
-            await state.clear()
-        else:
-            text = phrases['phrases']['longMessage'][lang]
-            await message.answer(text=text)
-    else:
+    if message_type == 'non-textual':
         text = phrases['phrases']['textMessage'][lang]
-        await message.answer(text=text)
+    elif message_type == 'long message':
+        text = phrases['phrases']['longMessage'][lang]
+    else:
+        text = phrases['phrases']['updateProfile'][lang]
+        panel = panels.commands_panel()
+        is_name_changed = True
+
+    await message.answer(text=text, reply_markup=panel)
+    if is_name_changed:
+        datasource.change_name(tg_id=message.from_user.id, name=message.text)
+        await state.clear()
 
 
 @dp.message(FormChangeUserProfile.birth_month)
 async def change_month(message: Message, state: FSMContext):
-    tg_id = str(message.from_user.id)
-    usr_id = datasource.get_id(tg_id)
-    lang = datasource.get_lang(usr_id)
+    lang = datasource.get_lang(tg_id=message.from_user.id)
     month_number = tools.get_month_number(message.text, lang)
-
     if month_number:
         text = phrases['phrases']['selectDay'][lang]
         await state.update_data(birth_month=month_number)
@@ -107,15 +101,13 @@ async def change_month(message: Message, state: FSMContext):
 
 @dp.message(FormChangeUserProfile.birthday)
 async def change_day(message: Message, state: FSMContext):
-    tg_id = str(message.from_user.id)
-    usr_id = datasource.get_id(tg_id)
-    lang = datasource.get_lang(usr_id)
+    lang = datasource.get_lang(tg_id=message.from_user.id)
     month_number = dict(await state.get_data()).get('birth_month')
     user_day = tools.correct_day(message.text, month_number)
 
     if user_day:
         text = phrases['phrases']['updateProfile'][lang]
-        datasource.change_birthday(usr_id, month_number, user_day)
+        datasource.change_birthday(tg_id=message.from_user.id, birth_month=month_number, birthday=user_day)
         await message.answer(text=text, reply_markup=panels.commands_panel())
         await state.clear()
     else:

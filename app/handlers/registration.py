@@ -8,11 +8,11 @@ from states import FormRegistration
 
 @dp.message(Command('start'))
 async def start_registration_command_handler(message: Message, state: FSMContext):
-    if not datasource.is_user_exist(message.from_user.id):
+    if not datasource.is_user_exist(tg_id=message.from_user.id):
         await message.answer(f"{message.from_user.full_name} 👋", reply_markup=panels.language_panel())
         await state.set_state(FormRegistration.language)
     else:
-        lang = datasource.get_lang(message.from_user.id)
+        lang = datasource.get_lang(tg_id=message.from_user.id)
         text = phrases['phrases']['alreadyReg'][lang]
         await message.answer(text=text, reply_markup=panels.commands_panel())
 
@@ -64,7 +64,7 @@ async def registration_input_nickname(message: Message, state: FSMContext):
     elif message_type == 'long message':
         text = phrases['phrases']['longMessage'][lang]
     else:
-        if not datasource.is_nickname_exist(message.text):
+        if not datasource.is_nickname_exist(nickname=message.text):
             text = phrases['phrases']['enterName'][lang]
             next_state = True
         else:
@@ -122,7 +122,7 @@ async def registration_input_day_of_birth(message: Message, state: FSMContext):
         await state.update_data(birthday=user_day)
         text = phrases['phrases']['registrationDone'][lang]
         data = tools.unpack_state_data(await state.get_data())
-        datasource.add_new_user(message.from_user.id, data)
+        datasource.add_new_user(tg_id=message.from_user.id, data=data)
         await message.answer(text=text, reply_markup=panels.commands_panel())
         await state.clear()
     else:
