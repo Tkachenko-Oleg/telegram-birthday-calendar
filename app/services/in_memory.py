@@ -6,13 +6,13 @@ class IsMemoryDataSource(DataSource):
     __db_users:dict = dict()
     __db_relation:dict = dict()
 
-    def get_id(self, tg_id: str) -> int:
+    def get_id(self, tg_id: int) -> int:
         pass
 
     def is_nickname_exist(self, nickname: str) -> bool:
         pass
 
-    def add_new_user_id(self, tg_id: str) -> None:
+    def add_new_user_id(self, tg_id: int) -> None:
         pass
 
     def add_new_user_info(self, usr_id: int, data: dict) -> None:

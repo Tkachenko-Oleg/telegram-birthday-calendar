@@ -73,7 +73,6 @@ class Tools:
             'Ноябрь 🍁',
             'Декабрь ❄️'
         ]
-
         date_list = data.split('-')
         month_index = int(date_list[1]) - 1
         day = int(date_list[2])
@@ -175,3 +174,14 @@ class Tools:
         }
 
         return data_dict
+
+
+    @staticmethod
+    def is_correct_name_message(message: str) -> str:
+        if message:
+            if len(message) <= 50:
+                return "correct message"
+            else:
+                return "long message"
+        else:
+            return "non-textual"

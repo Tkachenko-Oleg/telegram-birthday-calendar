@@ -27,32 +27,26 @@ class IsDataBaseSource(DataSource):
 
             self.cursor.execute(
                 """
-                create table if not exists user_ids (
-                user_id bigserial not null primary key,
-                tg_id varchar(50) not null unique
+                create table if not exists tg_users
+                (
+                    user_id bigserial not null primary key,
+                    tg_id bigint not null unique,
+                    user_nickname varchar(50) not null unique,
+                    user_name varchar(50),
+                    language UserLang,
+                    birth_date date not null,
+                    phone_number varchar(20) not null unique
                 );
                 """
             )
 
             self.cursor.execute(
                 """
-                create table if not exists tg_users (
-                user_id bigint not null references user_ids (user_id),
-                user_nickname varchar(50) not null unique,
-                user_name varchar(50),  
-                language UserLang,
-                birth_date date not null, 
-                phone_number varchar(20) not null unique
-                );
-                """
-            )
-
-            self.cursor.execute(
-                """
-                create table if not exists user_relations (
-                user_id bigint not null references user_ids (user_id),
-                friend_id bigint not null references user_ids (user_id),
-                unique (user_id, friend_id)
+                create table if not exists user_relations
+                (
+                    user_id bigint not null references tg_users (user_id) on delete cascade,
+                    friend_id bigint not null references tg_users (user_id) on delete cascade,
+                    unique (user_id, friend_id)
                 );
                 """
             )
@@ -60,12 +54,12 @@ class IsDataBaseSource(DataSource):
             self.connect.commit()
 
 
-    def get_id(self, tg_id: str) -> int:
+    def get_id(self, tg_id: int) -> int:
         with self.connect:
             self.cursor.execute(
                 """
                 select user_id
-                from user_ids
+                from tg_users
                 where tg_id = %s
                 """,
                 (tg_id,)
@@ -74,6 +68,22 @@ class IsDataBaseSource(DataSource):
         if data:
             return data[0]
         return 0
+
+
+    def is_user_exist(self, tg_id: int) -> bool:
+        with self.connect:
+            self.cursor.execute(
+                """
+                select exists (
+                select 1
+                from tg_users
+                where tg_id = %s
+                );
+                """,
+                (tg_id,)
+            )
+        data = self.cursor.fetchone()[0]
+        return data
 
 
     def is_nickname_exist(self, nickname: str) -> bool:
@@ -92,62 +102,49 @@ class IsDataBaseSource(DataSource):
         return data
 
 
-    def add_new_user_id(self, tg_id: str) -> None:
-        with self.connect:
-            self.cursor.execute(
-                """
-                insert into user_ids
-                (tg_id)
-                values (%s);
-                """,
-                (tg_id,)
-            )
-            self.connect.commit()
-
-
-    def add_new_user_info(self, usr_id: int, data: dict) -> None:
+    def add_new_user(self, tg_id: int, data: dict) -> None:
         with self.connect:
             self.cursor.execute(
                 """
                 insert into tg_users
-                (user_id, user_nickname, user_name, language, birth_date, phone_number)
+                (tg_id, user_nickname, user_name, language, birth_date, phone_number)
                 values (%s, %s, %s, %s, %s, %s);
                 """,
-                (usr_id, data.get('nick'), data.get('name'), data.get('lang'), data.get('birth'), data.get('phone'))
+                (tg_id, data.get('nick'), data.get('name'), data.get('lang'), data.get('birth'), data.get('phone'))
             )
             self.connect.commit()
 
 
-    def get_lang(self, usr_id: int) -> str:
+    def get_lang(self, tg_id: int) -> str:
         with self.connect:
             self.cursor.execute(
                 """
                 select language
                 from tg_users
-                where user_id = %s
+                where tg_id = %s
                 """,
-                (usr_id,)
+                (tg_id,)
             )
 
             lang = self.cursor.fetchone()[0]
             return lang
 
 
-    def user_profile(self, usr_id: int) -> tuple:
+    def user_profile(self, tg_id: int) -> tuple:
         with self.connect:
             self.cursor.execute(
                 """
                 select (user_nickname, user_name, birth_date, phone_number, language)
                 from tg_users
-                where user_id = %s;
+                where tg_id = %s;
                 """,
-                (usr_id,)
+                (tg_id,)
             )
             data = self.cursor.fetchone()[0]
             return data
 
 
-    def change_language(self, usr_id: int, lang: str) -> None:
+    def change_language(self, tg_id: int, lang: str) -> None:
         with self.connect:
             self.cursor.execute(
                 """
@@ -155,62 +152,70 @@ class IsDataBaseSource(DataSource):
                 set language = %s
                 where user_id = %s;
                 """,
-                (lang, usr_id)
+                (lang, tg_id)
             )
             self.connect.commit()
 
 
-    def change_name(self, usr_id: int, name: str) -> None:
+    def change_name(self, tg_id: int, name: str) -> None:
         with self.connect:
             self.cursor.execute(
                 """
                 update tg_users
                 set user_name = %s
-                where user_id = %s;
+                where tg_id = %s;
                 """,
-                (name, usr_id)
+                (name, tg_id)
             )
             self.connect.commit()
 
 
-    def change_birthday(self, usr_id: int, birth_month: int, birthday: int) -> None:
+    def change_birthday(self, tg_id: int, birth_month: int, birthday: int) -> None:
         with self.connect:
             self.cursor.execute(
                 """
                 update tg_users
                 set birth_date = %s
-                where user_id = %s;
+                where tg_id = %s;
                 """,
-                (f'2000-{birth_month}-{birthday}', usr_id)
+                (f'2000-{birth_month}-{birthday}', tg_id)
             )
             self.connect.commit()
 
 
-    def delete_profile(self, usr_id: int) -> None:
+    def delete_profile(self, tg_id: int) -> None:
         with self.connect:
             self.cursor.execute(
                 """
-                delete from user_relations
-                where user_id = %s or friend_id = %s;
-                """,
-                (usr_id, usr_id)
-            )
-
-            self.cursor.execute(
-                """
                 delete from tg_users
-                where user_id = %s;
+                where tg_id = %s
                 """,
-                (usr_id,)
+                (tg_id,)
             )
 
-            self.cursor.execute(
-                """
-                delete from user_ids
-                where user_id = %s;
-                """,
-                (usr_id,)
-            )
+            # self.cursor.execute(
+            #     """
+            #     delete from user_relations
+            #     where user_id = %s or friend_id = %s;
+            #     """,
+            #     (usr_id, usr_id)
+            # )
+            #
+            # self.cursor.execute(
+            #     """
+            #     delete from tg_users
+            #     where user_id = %s;
+            #     """,
+            #     (usr_id,)
+            # )
+            #
+            # self.cursor.execute(
+            #     """
+            #     delete from user_ids
+            #     where user_id = %s;
+            #     """,
+            #     (usr_id,)
+            # )
 
             self.connect.commit()
 
