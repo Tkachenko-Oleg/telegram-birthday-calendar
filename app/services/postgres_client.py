@@ -192,31 +192,6 @@ class IsDataBaseSource(DataSource):
                 """,
                 (tg_id,)
             )
-
-            # self.cursor.execute(
-            #     """
-            #     delete from user_relations
-            #     where user_id = %s or friend_id = %s;
-            #     """,
-            #     (usr_id, usr_id)
-            # )
-            #
-            # self.cursor.execute(
-            #     """
-            #     delete from tg_users
-            #     where user_id = %s;
-            #     """,
-            #     (usr_id,)
-            # )
-            #
-            # self.cursor.execute(
-            #     """
-            #     delete from user_ids
-            #     where user_id = %s;
-            #     """,
-            #     (usr_id,)
-            # )
-
             self.connect.commit()
 
 
@@ -249,11 +224,11 @@ class IsDataBaseSource(DataSource):
             self.connect.commit()
 
 
-    def get_id_by_nickname(self, nickname: str) -> int:
+    def get_tg_id_by_nickname(self, nickname: str) -> int:
         with self.connect:
             self.cursor.execute(
                 """
-                select user_id
+                select tg_id
                 from tg_users
                 where user_nickname = %s
                 """,

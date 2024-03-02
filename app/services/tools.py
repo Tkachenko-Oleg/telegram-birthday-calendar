@@ -150,7 +150,7 @@ class Tools:
 
 
     @staticmethod
-    def parse_postgres(data: tuple) -> dict:
+    def parse_postgres(data: tuple, phrases: dict, lang: str) -> str:
         data = str(data).replace('(', '').replace(')', '').split(',')
 
         nickname = data[0].replace('"', '')
@@ -165,15 +165,13 @@ class Tools:
                 language = "🇬🇧"
         birth_date = Tools.parse_postgres_date(data[2], language)
 
-        data_dict = {
-            'nick': nickname,
-            'name': name,
-            'birth': birth_date,
-            'phone': phone_number,
-            'lang': language
-        }
+        out_string = f"{phrases['fields']['nick'][lang]}: {nickname}\n" \
+                     f"{phrases['fields']['name'][lang]}: {name}\n" \
+                     f"{phrases['fields']['birthday'][lang]}: {birth_date}\n" \
+                     f"{phrases['fields']['phone'][lang]}: {phone_number}\n" \
+                     f"{phrases['fields']['language'][lang]}: {language}"
 
-        return data_dict
+        return out_string
 
 
     @staticmethod
