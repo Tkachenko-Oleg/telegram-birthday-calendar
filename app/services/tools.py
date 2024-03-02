@@ -33,11 +33,10 @@ class Tools:
             'Декабрь ❄️'
         ]
         try:
-            match lang:
-                case 'En':
-                    return months_en.index(string_month) + 1
-                case 'Ru':
-                    return months_ru.index(string_month) + 1
+            if lang == 'En':
+                return months_en.index(string_month) + 1
+            elif lang == 'Ru':
+                return months_ru.index(string_month) + 1
         except ValueError:
             return 0
 
@@ -76,14 +75,12 @@ class Tools:
         date_list = data.split('-')
         month_index = int(date_list[1]) - 1
         day = int(date_list[2])
-        match lang:
-            case '🇬🇧':
-                month = months_en[month_index]
-            case '🇷🇺':
-                month = months_ru[month_index]
-            case _:
-                month = 0
-
+        if lang == '🇬🇧':
+            month = months_en[month_index]
+        elif lang == '🇷🇺':
+            month = months_ru[month_index]
+        else:
+            month = 0
         return f"{day} {month}"
 
 
@@ -114,13 +111,12 @@ class Tools:
     def format_info_about_friend(data):
         data = str(data).replace('(', '').replace(')', '').split(',')
         name = data[0].replace('"', '')
-        match data[1]:
-            case 'Ru':
-                lang = "🇷🇺"
-            case 'En':
-                lang = "🇬🇧"
-            case _:
-                lang = "🇬🇧"
+        if data[1] == 'Ru':
+            lang = "🇷🇺"
+        elif data[1] == 'En':
+            lang = "🇬🇧"
+        else:
+            lang = "🇬🇧"
         birth_date = Tools.parse_postgres_date(data[2], lang)
         phone_number = data[3]
 
@@ -156,13 +152,12 @@ class Tools:
         nickname = data[0].replace('"', '')
         name = data[1].replace('"', '')
         phone_number = data[3]
-        match data[4]:
-            case 'Ru':
-                language = "🇷🇺"
-            case 'En':
-                language = "🇬🇧"
-            case _:
-                language = "🇬🇧"
+        if data[4] == 'Ru':
+            language = "🇷🇺"
+        elif data[4] == 'En':
+            language = "🇬🇧"
+        else:
+            language = "🇬🇧"
         birth_date = Tools.parse_postgres_date(data[2], language)
 
         out_string = f"{phrases['fields']['nick'][lang]}: {nickname}\n" \

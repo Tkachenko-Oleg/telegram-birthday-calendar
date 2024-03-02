@@ -102,6 +102,7 @@ async def registration_input_name(message: Message, state: FSMContext):
 async def registration_input_month_of_birth(message: Message, state: FSMContext):
     lang = dict(await state.get_data()).get('language')
     month_number = tools.get_month_number(message.text, lang)
+
     if month_number:
         text = phrases['phrases']['selectDay'][lang]
         await state.update_data(birth_month = month_number)

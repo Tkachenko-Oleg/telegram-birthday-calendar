@@ -89,6 +89,7 @@ async def change_name(message: Message, state: FSMContext):
 async def change_month(message: Message, state: FSMContext):
     lang = datasource.get_lang(tg_id=message.from_user.id)
     month_number = tools.get_month_number(message.text, lang)
+
     if month_number:
         text = phrases['phrases']['selectDay'][lang]
         await state.update_data(birth_month=month_number)
