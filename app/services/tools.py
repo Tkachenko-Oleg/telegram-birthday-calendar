@@ -183,3 +183,13 @@ class Tools:
                 return "long message"
         else:
             return "non-textual"
+
+
+    @staticmethod
+    def create_help_text(phrases, lang):
+        text = f"{phrases['helpText']['showProfile'][lang]}\n\n" \
+               f"{phrases['helpText']['changeProfile'][lang]}\n\n" \
+               f"{phrases['helpText']['deleteProfile'][lang]}\n\n" \
+               f"{phrases['helpText']['searchProfile'][lang]}\n\n" \
+               f"{phrases['helpText']['showBirthdayList'][lang]}"
+        return text
