@@ -11,7 +11,7 @@ RUN pip3 install psycopg2-binary
 
 RUN mkdir -p /opt/telegram-birthday-calendar
 
-COPY . /opt/telegram-birthday-calendar/app
+COPY .. /opt/telegram-birthday-calendar/app
 
 WORKDIR /opt/telegram-birthday-calendar/app
 RUN useradd mybot
