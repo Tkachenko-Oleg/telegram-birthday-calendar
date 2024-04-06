@@ -7,9 +7,10 @@ from states import FormRegistration
 
 
 @dp.message(Command('start'))
-async def start_registration_command_handler(message: Message, state: FSMContext):
+async def start(message: Message, state: FSMContext):
     if not datasource.is_user_exist(tg_id=message.from_user.id):
-        await message.answer(f"{message.from_user.full_name} 👋", reply_markup=panels.language_panel())
+        await message.answer(f"{message.from_user.full_name} 👋")
+        await message.answer("🇬🇧: Choose language\n🇷🇺: Выберете язык", reply_markup=panels.language_panel())
         await state.set_state(FormRegistration.language)
     else:
         lang = datasource.get_lang(tg_id=message.from_user.id)
@@ -18,11 +19,10 @@ async def start_registration_command_handler(message: Message, state: FSMContext
 
 
 @dp.message(FormRegistration.language)
-async def registration_input_language_ru(message: Message, state: FSMContext):
+async def input_language(message: Message, state: FSMContext):
     await state.update_data(tg_id=message.from_user.id)
     is_lang_selected = True
     curr_lang = 'En'
-    text = "🇬🇧: Choose language\n🇷🇺: Выберете язык"
 
     if message.text == "Русский 🇷🇺":
         curr_lang = 'Ru'
@@ -37,11 +37,11 @@ async def registration_input_language_ru(message: Message, state: FSMContext):
         await message.answer(text=text, reply_markup=panels.contact_panel(phrases, curr_lang))
         await state.set_state(FormRegistration.phone_number)
     else:
-        await message.answer(text=text, reply_markup=panels.language_panel())
+        await message.delete()
 
 
 @dp.message(FormRegistration.phone_number)
-async def registration_input_phone_number(message: Message, state: FSMContext):
+async def input_phone_number(message: Message, state: FSMContext):
     lang = dict(await state.get_data()).get('language')
     if message.contact:
         text = phrases['phrases']['enterNickname'][lang]
@@ -49,12 +49,11 @@ async def registration_input_phone_number(message: Message, state: FSMContext):
         await message.answer(text=text, reply_markup=panels.remove_panel())
         await state.set_state(FormRegistration.nickname)
     else:
-        text = phrases['phrases']['regButton'][lang]
-        await message.answer(text=text, reply_markup=panels.contact_panel(phrases, lang))
+        await message.delete()
 
 
 @dp.message(FormRegistration.nickname)
-async def registration_input_nickname(message: Message, state: FSMContext):
+async def input_nickname(message: Message, state: FSMContext):
     lang = dict(await state.get_data()).get('language')
     message_type = tools.is_correct_name_message(message.text)
     next_state = False
@@ -77,7 +76,7 @@ async def registration_input_nickname(message: Message, state: FSMContext):
 
 
 @dp.message(FormRegistration.name)
-async def registration_input_name(message: Message, state: FSMContext):
+async def input_name(message: Message, state: FSMContext):
     lang = dict(await state.get_data()).get('language')
     message_type = tools.is_correct_name_message(message.text)
     panel = None
@@ -99,7 +98,7 @@ async def registration_input_name(message: Message, state: FSMContext):
 
 
 @dp.message(FormRegistration.birth_month)
-async def registration_input_month_of_birth(message: Message, state: FSMContext):
+async def input_month_of_birth(message: Message, state: FSMContext):
     lang = dict(await state.get_data()).get('language')
     month_number = tools.get_month_number(message.text, lang)
 
@@ -114,7 +113,7 @@ async def registration_input_month_of_birth(message: Message, state: FSMContext)
 
 
 @dp.message(FormRegistration.birthday)
-async def registration_input_day_of_birth(message: Message, state: FSMContext):
+async def input_day_of_birth(message: Message, state: FSMContext):
     lang = dict(await state.get_data()).get('language')
     month_number = dict(await state.get_data()).get('birth_month')
     user_day = tools.correct_day(message.text, month_number)

@@ -1,6 +1,6 @@
 import psycopg2
 
-from .datasource import DataSource
+from app.bot.database.datasource import DataSource
 from config import Config
 
 class IsDataBaseSource(DataSource):
@@ -31,11 +31,12 @@ class IsDataBaseSource(DataSource):
                 (
                     user_id bigserial not null primary key,
                     tg_id bigint not null unique,
-                    user_nickname varchar(50) not null unique,
-                    user_name varchar(50),
+                    nickname varchar(50) not null unique,
+                    username varchar(50),
                     language UserLang,
                     birth_date date not null,
-                    phone_number varchar(20) not null unique
+                    phone_number varchar(20) not null unique, 
+                    congratulated boolean default false
                 );
                 """
             )
@@ -47,6 +48,16 @@ class IsDataBaseSource(DataSource):
                     user_id bigint not null references tg_users (user_id) on delete cascade,
                     friend_id bigint not null references tg_users (user_id) on delete cascade,
                     unique (user_id, friend_id)
+                );
+                """
+            )
+
+            self.cursor.execute(
+                """
+                create table if not exists wishes
+                (
+                    user_id bigint not null references tg_users (user_id) on delete cascade,
+                    wish varchar(100)
                 );
                 """
             )
@@ -93,7 +104,7 @@ class IsDataBaseSource(DataSource):
                 select exists (
                 select 1
                 from tg_users
-                where user_nickname = %s
+                where nickname = %s
                 );
                 """,
                 (nickname,)
@@ -107,7 +118,7 @@ class IsDataBaseSource(DataSource):
             self.cursor.execute(
                 """
                 insert into tg_users
-                (tg_id, user_nickname, user_name, language, birth_date, phone_number)
+                (tg_id, nickname, username, language, birth_date, phone_number)
                 values (%s, %s, %s, %s, %s, %s);
                 """,
                 (tg_id, data.get('nick'), data.get('name'), data.get('lang'), data.get('birth'), data.get('phone'))
@@ -134,7 +145,7 @@ class IsDataBaseSource(DataSource):
         with self.connect:
             self.cursor.execute(
                 """
-                select (user_nickname, user_name, birth_date, phone_number, language)
+                select (nickname, username, birth_date, phone_number, language)
                 from tg_users
                 where tg_id = %s;
                 """,
@@ -162,7 +173,7 @@ class IsDataBaseSource(DataSource):
             self.cursor.execute(
                 """
                 update tg_users
-                set user_name = %s
+                set username = %s
                 where tg_id = %s;
                 """,
                 (name, tg_id)
@@ -230,7 +241,7 @@ class IsDataBaseSource(DataSource):
                 """
                 select tg_id
                 from tg_users
-                where user_nickname = %s
+                where nickname = %s
                 """,
                 (nickname,)
             )
@@ -256,7 +267,7 @@ class IsDataBaseSource(DataSource):
         with self.connect:
             self.cursor.execute(
                 """
-                select (user_name, language, birth_date, phone_number)
+                select (username, language, birth_date, phone_number)
                 from tg_users
                 where user_id = %s;
                 """,

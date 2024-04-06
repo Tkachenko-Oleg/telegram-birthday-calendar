@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher
 from config import Config
 from services import IsMemoryDataSource, IsDataBaseSource, Tools, DatasourceId, Panels
 
+
 def create_data_source(key):
     match key:
         case DatasourceId.InMemory:

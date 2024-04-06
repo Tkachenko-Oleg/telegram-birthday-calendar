@@ -11,7 +11,7 @@ async def change_user_profile_command_handler(message: Message, state: FSMContex
         lang = datasource.get_lang(tg_id=message.from_user.id)
         text = phrases['phrases']['changeSetting'][lang]
         await state.set_state(FormChangeUserProfile.choice)
-        await message.answer(text=text, reply_markup=panels.changes_panel(phrases, lang))
+        await message.answer(text=text, reply_markup=panels.options_keyboard(phrases, lang))
     else:
         await message.answer("You are not registered")
 
@@ -36,7 +36,7 @@ async def identify_change(message: Message, state: FSMContext):
 
     else:
         text = phrases['phrases']['changeSetting'][lang]
-        await message.answer(text=text, reply_markup=panels.changes_panel(phrases, lang))
+        await message.answer(text=text, reply_markup=panels.options_keyboard(phrases, lang))
 
 
 

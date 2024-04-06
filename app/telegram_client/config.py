@@ -5,6 +5,11 @@ from os import environ
 @dataclass
 class Config:
 
-    token = environ['TOKEN']                # You need to add an environment variable
-    api_id = environ['API_ID']              # You need to add an environment variable
-    api_hash = environ['API_HASH']          # You need to add an environment variable
+    token = environ['TOKEN']
+    api_id = environ['API_ID']
+    api_hash = environ['API_HASH']
+    database = environ['DATABASE']
+    username = environ['USERDATABASE']
+    password = environ['PASSWORD']
+    host = environ['HOST']
+    port = environ['PORT']

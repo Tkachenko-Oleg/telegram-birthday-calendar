@@ -86,24 +86,15 @@ class Tools:
 
     @staticmethod
     def max_day_of_month(month: int) -> int:
-        list_31 = [1, 3, 5, 7, 8, 10, 12]
-        list_30 = [4, 6, 9, 11]
-        if month in list_31:
-            return 31
-        elif month in list_30:
-            return 30
-        else:
-            return 29
+        days_in_month = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        return days_in_month[month-1]
 
 
     @staticmethod
     def correct_day(day: str, month: int) -> int:
-        try:
-            if day and (1 <= int(day) <= Tools.max_day_of_month(month)):
-                return int(day)
-            else:
-                return 0
-        except ValueError:
+        if day and day.isdigit() and (1 <= int(day) <= Tools.max_day_of_month(month)):
+            return int(day)
+        else:
             return 0
 
 
