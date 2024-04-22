@@ -43,3 +43,12 @@ class DataSource:
 
     def get_birthday(self, usr_id: int) -> tuple:
         pass
+
+    def get_friend_birthdays(self, tg_id: int) -> tuple:
+        pass
+
+    def delete_friend(self, tg_id: int, nickname_friend: str):
+        pass
+
+    def show_info_about_friend(self, tg_id: int, nickname: str):
+        pass

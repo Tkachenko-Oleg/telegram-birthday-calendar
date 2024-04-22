@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 
 class Tools:
@@ -75,9 +75,9 @@ class Tools:
         date_list = data.split('-')
         month_index = int(date_list[1]) - 1
         day = int(date_list[2])
-        if lang == '🇬🇧':
+        if lang == '🇬🇧' or lang == 'En':
             month = months_en[month_index]
-        elif lang == '🇷🇺':
+        elif lang == '🇷🇺' or lang == 'Ru':
             month = months_ru[month_index]
         else:
             month = 0
@@ -121,8 +121,8 @@ class Tools:
     @staticmethod
     def unpack_state_data(data: dict) -> dict:
         year = 2000
-        month = int(data.get('birth_month'))
-        day = int(data.get('birthday'))
+        month = int(data.get('month'))
+        day = int(data.get('day'))
 
         output_data = {
             "tg": data.get('tg_id'),
@@ -161,14 +161,38 @@ class Tools:
 
 
     @staticmethod
-    def is_correct_name_message(message: str) -> str:
-        if message:
-            if len(message) <= 50:
-                return "correct message"
-            else:
-                return "long message"
-        else:
-            return "non-textual"
+    def correct_chars(message):
+        correct_chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                         'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                         'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+                         'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+                         'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                         'Y', 'Z', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж',
+                         'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р',
+                         'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ',
+                         'ы', 'ь', 'э', 'ю', 'я', 'А', 'Б', 'В', 'Г', 'Д',
+                         'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н',
+                         'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч',
+                         'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', '0', '1',
+                         '2', '3', '4', '5', '6', '7', '8', '9', '_']
+        for char in message:
+            if char not in correct_chars:
+                return False
+        return True
+
+
+
+    @staticmethod
+    def is_correct_name_message(message: str, phrases: dict, lang: str) -> str:
+        if not message:
+            return phrases['phrases']['textMessage'][lang]
+        if ' ' in message:
+            return phrases['phrases']['spaceInMessage'][lang]
+        if not Tools.correct_chars(message):
+            return phrases['phrases']['incorrectChars'][lang]
+        if len(message) > 50:
+            return phrases['phrases']['longMessage'][lang]
+        return "correct message"
 
 
     @staticmethod
@@ -179,3 +203,78 @@ class Tools:
                f"{phrases['helpText']['searchProfile'][lang]}\n\n" \
                f"{phrases['helpText']['showBirthdayList'][lang]}"
         return text
+
+
+    @staticmethod
+    def convert_postgres_birthdays_list_to_string(postgres_string, phrases, lang):
+        string = f"{phrases['phrases']['friendsTitle'][lang]}\n"
+        friends_list = list()
+        friend_number = 0
+
+        for element in postgres_string:
+            element = element[0].replace('(', '').replace(')', '').split(',')
+            friends_list.append({'nickname': element[0], 'date': element[1]})
+
+        sorted_friends_list = sorted(friends_list, key=lambda x: datetime.strptime(x['date'], '%Y-%m-%d'))
+        for element in sorted_friends_list:
+            friend_number += 1
+            string += f"{friend_number}) {element['nickname']} - {Tools.parse_postgres_date(element['date'], lang)}\n"
+        return string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

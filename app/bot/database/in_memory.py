@@ -1,4 +1,4 @@
-from app.bot.database.datasource import DataSource
+from .datasource import DataSource
 
 
 class IsMemoryDataSource(DataSource):

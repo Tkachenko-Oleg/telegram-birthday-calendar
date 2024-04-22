@@ -2,8 +2,10 @@ import asyncio
 import json
 from aiogram import Bot, Dispatcher
 
+import keyboards
 from config import Config
-from services import IsMemoryDataSource, IsDataBaseSource, Tools, DatasourceId, Panels
+from database import IsMemoryDataSource, IsDataBaseSource, DatasourceId
+from services import Tools
 
 
 def create_data_source(key):
@@ -17,7 +19,7 @@ def create_data_source(key):
 bot = Bot(token=Config.token)
 dp = Dispatcher()
 tools = Tools()
-panels = Panels()
+keyboards = keyboards
 datasource = create_data_source(DatasourceId.Postgres)
 # datasource.create_table()
 with open('phrases.json') as jsonFile:

@@ -1,10 +1,17 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 def options_keyboard(phrases, lang):
-    change_buttons = [[
-        KeyboardButton(text=phrases['phrases']['changeLanguage'][lang]),
-        KeyboardButton(text=phrases['phrases']['changeName'][lang]),
-        KeyboardButton(text=phrases['phrases']['changeBirthday'][lang])
-    ]]
-    keyboard = ReplyKeyboardMarkup(keyboard=change_buttons, resize_keyboard=True)
-    return keyboard
+    texts = [
+        phrases['phrases']['changeLanguage'][lang],
+        phrases['phrases']['changeName'][lang],
+        phrases['phrases']['changeBirthday'][lang],
+        phrases['phrases']['Back'][lang]
+    ]
+
+    keyboard = ReplyKeyboardBuilder()
+    for text in texts:
+        keyboard.add(KeyboardButton(text=text))
+    keyboard.adjust(2)
+
+    return keyboard.as_markup(resize_keyboard=True)

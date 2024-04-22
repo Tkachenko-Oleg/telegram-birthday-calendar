@@ -1,9 +1,9 @@
 from aiogram.types import KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from ..services.tools import Tools
+from app.bot.services.tools import Tools
 
-def day_keyboard(month):
+def days_keyboard(month):
     keyboard = ReplyKeyboardBuilder()
     for day in range(1, 33):
         if day <= Tools.max_day_of_month(month):

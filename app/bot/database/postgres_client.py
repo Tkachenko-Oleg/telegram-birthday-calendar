@@ -1,7 +1,7 @@
 import psycopg2
 
-from app.bot.database.datasource import DataSource
-from config import Config
+from .datasource import DataSource
+from app.bot.config import Config
 
 class IsDataBaseSource(DataSource):
     def __init__(self):
@@ -275,3 +275,60 @@ class IsDataBaseSource(DataSource):
             )
             data = self.cursor.fetchone()[0]
             return data
+
+
+    def get_friend_birthdays(self, tg_id: int) -> tuple:
+        with self.connect:
+            self.cursor.execute(
+                """
+                with usr as (
+                    select user_id
+                    from tg_users
+                    where tg_id = %s
+                ),
+                
+                friends as (
+                    select friend_id from user_relations
+                    inner join usr on user_relations.user_id = usr.user_id
+                ),
+                
+                output_data as (
+                    select (nickname, birth_date) from tg_users
+                    inner join friends on tg_users.user_id = friends.friend_id
+                )
+                
+                select * from output_data;
+                """,
+                (tg_id,)
+            )
+
+        data = self.cursor.fetchall()
+        return data
+
+
+    def delete_friend(self, tg_id: int, nickname_friend: str):
+        with self.connect:
+            self.cursor.execute(
+                """
+                with usr as (
+                    select user_id 
+                    from tg_users
+                    where tg_id = %s
+                ),
+                
+                friend as (
+                    select user_id 
+                    from tg_users
+                    where nickname = %s
+                )
+                
+                delete from user_relations
+                using usr, friend
+                where user_relations.user_id = usr.user_id and user_relations.friend_id = friend.user_id;
+                """,
+                (tg_id, nickname_friend)
+            )
+
+
+    def show_info_about_friend(self, tg_id: int, nickname: str):
+        pass

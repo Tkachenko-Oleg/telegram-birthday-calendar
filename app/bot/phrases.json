@@ -1,4 +1,8 @@
 {
+  "main": {
+    "Ru": "\uD83D\uDC64Профиль: /profile\n\uD83D\uDC65 Друзья: /friends\n✨ Пожелания: /wishes\n\uD83D\uDEDF Помощь: /help",
+    "En": "\uD83D\uDC64Profile: /profile\n\uD83D\uDC65 Friends: /friends\n✨ Wishes: /wishes\n\uD83D\uDEDF Help: /help"
+  },
   "months": {
     "december": {
       "Ru": "Декабрь ❄️",
@@ -101,24 +105,20 @@
       "En": "Registration successfully completed"
     },
     "changeLanguage": {
-      "Ru": "Изменить язык",
-      "En": "Change language"
+      "Ru": "\uD83D\uDD27 Изменить язык",
+      "En": "\uD83D\uDD27 Change language"
     },
     "changeName": {
-      "Ru": "Изменить имя",
-      "En": "Change name"
+      "Ru": "\uD83D\uDD27 Изменить имя",
+      "En": "\uD83D\uDD27 Change name"
     },
     "changeBirthday": {
-      "Ru": "Изменить дату рождения",
-      "En": "Change date of birth"
+      "Ru": "\uD83D\uDD27 Изменить дату рождения",
+      "En": "\uD83D\uDD27 Change date of birth"
     },
     "questDelProfile": {
-      "Ru": "Удалить профиль ✅",
-      "En": "Delete profile ✅"
-    },
-    "questNotDelProfile": {
-      "Ru": "Не удалять профиль ❌",
-      "En": "Do not delete profile ❌"
+      "Ru": "\uD83D\uDDD1 Удалить профиль",
+      "En": "\uD83D\uDDD1 Delete profile"
     },
     "searchContact": {
       "Ru": "Искать по контакту",
@@ -148,7 +148,7 @@
       "Ru": "Вы уверены?",
       "En": "Are you sure?"
     },
-    "regButton": {
+    "shareContactMessage": {
       "Ru": "Нажмите кнопку, чтобы поделиться своим номером телефона для регистрации",
       "En": "Click the button to share your phone number for registration"
     },
@@ -184,13 +184,21 @@
       "Ru": "Введите текстовое сообщение",
       "En": "Enter a text message"
     },
-    "alreadyReg": {
+    "registrationIsAlreadyCompleted": {
       "Ru": "Вы уже зарегистрированны",
       "En": "You are already registered"
     },
     "longMessage": {
       "Ru": "Максимальная длина сообщения - 50 символов",
       "En": "The maximum message length is 50 characters"
+    },
+    "incorrectChars": {
+      "Ru": "Допустимые символы: ( A-z, А-я, 0-9, _ )",
+      "En": "Valid characters: ( A-z, А-я, 0-9, _ )"
+    },
+    "spaceInMessage": {
+      "Ru": "Введите текст без пробелов",
+      "En": "Enter text without spaces"
     },
     "updateProfile": {
       "Ru": "Профиль обновлен",
@@ -211,6 +219,53 @@
     "emptyBirthdayList": {
       "Ru": "Ваш список дней рождений пуст",
       "En": "Your birthday list is empty"
+    },
+    "profileChange": {
+      "Ru": "\uD83D\uDEE0 Изменить профиль",
+      "En": "\uD83D\uDEE0 Change profile"
+    },
+    "profileDelete": {
+      "Ru": "\uD83D\uDDD1 Удалить профиль",
+      "En": "\uD83D\uDDD1 Delete profile"
+    },
+    "Back": {
+      "Ru": "⬅\uFE0F Назад",
+      "En": "⬅\uFE0F Back"
+    },
+    "friendsTitle":
+    {
+      "Ru": "Друзья: ",
+      "En": "Friends: "
+    },
+    "addFriend":
+    {
+      "Ru": "➕ Добавить друга",
+      "En": "➕ Add friend"
+    },
+    "infoAboutFriend": {
+      "Ru": "ℹ\uFE0F Подробности о друге",
+      "En": "ℹ\uFE0F Details about a friend"
+    },
+    "deleteFriend":
+    {
+      "Ru": "✖\uFE0F Удалить друга",
+      "En": "✖\uFE0F Delete friend"
+    },
+    "inputNicknameDelFriend": {
+      "Ru": "Введите псевдоним друга, которого вы хотите удалить",
+      "En": "Enter the nickname of the friend you want to remove"
+    },
+    "inputNicknameInfoFriend": {
+      "Ru": "Введите псевдоним друга",
+      "En": "Enter the nickname of the friend"
+    },
+    "confirmationDeleteFriend": {
+      "Ru": "❌ Удалить друга",
+      "En": "❌ Delete friend"
+    },
+    "friendIsDeleted": {
+      "Ru": "Пользователь удален из списка друзей",
+      "En": "User removed from friends list"
     }
   },
   "helpText": {
